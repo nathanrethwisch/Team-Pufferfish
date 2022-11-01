@@ -1,1 +1,4 @@
+“.csv” filter=lfs diff=lfs merge=lfs -text
+*csv filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
+Vehicle_Crashes_in_Iowa.csv filter=lfs diff=lfs merge=lfs -text
