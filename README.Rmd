@@ -7,7 +7,9 @@ output: github_document
 I love pufferfish
 
 ```{r}
-crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
+#Use this if the below code doesn't work - file must be stored on your device.
+#crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
+crashes<- read.csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 View(crashes)
 ```
 
