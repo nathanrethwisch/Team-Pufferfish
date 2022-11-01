@@ -68,5 +68,20 @@ crashes%>%
 ```
 
 ```{r}
+crashes%>%
+  ggplot(aes(x = Roadway.Contribution)) +geom_bar() + facet_wrap(~Crash.Severity)+coord_flip()
+```
+
+```{r}
+crashes%>%
+      ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
+```
+
+```{r}
+crashes2<- crashes%>%
+  group_by(Roadway.Type, Crash.Severity)%>%
+  summarise(n = n())
+
+crashes2[which.max(crashes2$n),]
 
 ```
