@@ -5,3 +5,8 @@ output: github_document
 #I love FORTNITE
 
 I love pufferfish
+
+```{r}
+crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
+View(crashes)
+```
