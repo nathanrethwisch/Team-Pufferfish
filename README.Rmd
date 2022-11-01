@@ -25,12 +25,46 @@ colSums(is.na(crashes))
 #This is strange because it appears that City.Name has NA values
 sum(is.na(crashes$City.Name))
 
+#Making blank and N/A value in NA
 crashes$City.Name[crashes$City.Name == ""] <- NA
 crashes$County.Name[crashes$County.Name == ""] <- NA
 crashes$Route.with.System[crashes$Route.with.System == ""] <- NA
 crashes[crashes=="N/A"]<-NA
 
+#Making the case number an integer
 crashes$Law.Enforcement.Case.Number <- as.integer(crashes$Law.Enforcement.Case.Number)
+```
+
+```{r}
+#Getting the distinct latitude and longitude
+crashes<- crashes%>%
+  separate(col = Location, into = c(NA, "Latitude", "Longitude"), remove =
+             FALSE, sep = " ")
+
+crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
+```
+
+```{r}
+crashes$Date.of.Crash <- lubridate::mdy(crashes$Date.of.Crash)
+
+#Creating a new columns that are separate for year, month, and day
+crashes <- crashes%>%
+  separate(col = Date.of.Crash, into = c("Year", "Month", "Day"), remove =
+             FALSE, sep = "-")
+View(crashes)
+```
+
+```{r}
+crashes%>%
+  group_by(Crash.Severity)%>%
+  summarise(n = n())
+```
+
+```{r}
+crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  group_by(Roadway.Contribution)%>%
+  summarise(n = n())
 ```
 
 ```{r}
