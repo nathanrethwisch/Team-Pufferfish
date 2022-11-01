@@ -10,3 +10,29 @@ I love pufferfish
 crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
 View(crashes)
 ```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+dim(crashes)
+str(crashes)
+
+#NA values sare only found in Amount of Property Damage?
+colSums(is.na(crashes))
+
+#This is strange because it appears that City.Name has NA values
+sum(is.na(crashes$City.Name))
+
+crashes$City.Name[crashes$City.Name == ""] <- NA
+crashes$County.Name[crashes$County.Name == ""] <- NA
+crashes$Route.with.System[crashes$Route.with.System == ""] <- NA
+crashes[crashes=="N/A"]<-NA
+
+crashes$Law.Enforcement.Case.Number <- as.integer(crashes$Law.Enforcement.Case.Number)
+```
+
+```{r}
+
+```
