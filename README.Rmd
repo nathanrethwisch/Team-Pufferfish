@@ -25,16 +25,16 @@ str(crashes)
 colSums(is.na(crashes))
 
 #This is strange because it appears that City.Name has NA values
-sum(is.na(crashes$City.Name))
+sum(is.na(crashes$`City Name`))
 
 #Making blank and N/A value in NA
-crashes$City.Name[crashes$City.Name == ""] <- NA
-crashes$County.Name[crashes$County.Name == ""] <- NA
-crashes$Route.with.System[crashes$Route.with.System == ""] <- NA
+crashes$`City Name`[crashes$`City Name` == ""] <- NA
+crashes$`County Name`[crashes$`County Name` == ""] <- NA
+crashes$`Route with System`[crashes$`Route with System` == ""] <- NA
 crashes[crashes=="N/A"]<-NA
 
 #Making the case number an integer
-crashes$Law.Enforcement.Case.Number <- as.integer(crashes$Law.Enforcement.Case.Number)
+crashes$`Law Enforcement Case Number` <- as.integer(crashes$`Law Enforcement Case Number`)
 
 #Checking NA sums after we made changes to the dataset
 colSums(is.na(crashes))
@@ -50,11 +50,11 @@ crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_
 ```
 
 ```{r}
-crashes$Date.of.Crash <- lubridate::mdy(crashes$Date.of.Crash)
+crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
 
 #Creating a new columns that are separate for year, month, and day
 crashes <- crashes%>%
-  separate(col = Date.of.Crash, into = c("Year", "Month", "Day"), remove =
+  separate(col = `Date of Crash`, into = c("Year", "Month", "Day"), remove =
              FALSE, sep = "-")
 View(crashes)
 ```
@@ -62,22 +62,22 @@ View(crashes)
 ```{r}
 #Looking at the different crash severities
 crashes%>%
-  group_by(Crash.Severity)%>%
+  group_by(`Crash Severity`)%>%
   summarise(n = n())
 ```
 
 ```{r}
 #Roadway contribution to fatal car accidents
 crashes%>%
-  filter(Crash.Severity == "Fatal")%>%
-  group_by(Roadway.Contribution)%>%
+  filter(`Crash Severity` == "Fatal")%>%
+  group_by(`Roadway Contribution`)%>%
   summarise(n = n())
 ```
 
 ```{r}
 #The count of roadway contributions by injury severity
 crashes%>%
-  ggplot(aes(x = Roadway.Contribution)) +geom_bar() + facet_wrap(~Crash.Severity)+coord_flip()
+  ggplot(aes(x = `Roadway Contribution`)) +geom_bar() + facet_wrap(~`Crash Severity`)+coord_flip()
 ```
 
 ```{r}
@@ -89,7 +89,7 @@ crashes%>%
 ```{r}
 #Crash severity grouped by roadway type
 crashes2<- crashes%>%
-  group_by(Roadway.Type, Crash.Severity)%>%
+  group_by(`Roadway Type`, `Crash Severity`)%>%
   summarise(n = n())
 
 crashes2[which.max(crashes2$n),]
@@ -99,18 +99,18 @@ crashes2[which.max(crashes2$n),]
 ```{r}
 #The top cause of fatal crashes
 crashes3<- crashes%>%
-  filter(Crash.Severity == "Fatal")%>%
-  group_by(Major.Cause)%>%
+  filter(`Crash Severity` == "Fatal")%>%
+  group_by(`Major Cause`)%>%
   summarise(n = n())
 
-View(crashes3[which.max(crashes3$n),])
+crashes3[which.max(crashes3$n),]
 ```
 
 ```{r}
 #Looking at the top environmental and surface conditions for fatal accidents
 Cause_crashes<- crashes%>%
-  filter(Crash.Severity == "Fatal")%>%
-  group_by(Environmental.Conditions, Light.Conditions, Surface.Conditions, Weather.Conditions)%>%
+  filter(`Crash Severity` == "Fatal")%>%
+  group_by(`Environmental Conditions`, `Light Conditions`, `Surface Conditions`, `Weather Conditions`)%>%
   summarise(n = n())
 
 Cause_crashes%>%filter(n > 100)
@@ -119,21 +119,21 @@ Cause_crashes%>%filter(n > 100)
 ```{r}
 #Barplot of fatal crashes by light condition
 crashes%>%
-  filter(Crash.Severity == "Fatal")%>%
-  ggplot(aes(x = Light.Conditions)) +geom_bar() + coord_flip()
+  filter(`Crash Severity` == "Fatal")%>%
+  ggplot(aes(x = `Light Conditions`)) +geom_bar() + coord_flip()
 ```
 
 ```{r fig.height = 10, fig.width = 10}
 #Fatal Crashes by Day
 crashes%>%
   group_by(Month)%>%
-  filter(Crash.Severity == "Fatal")%>%
-  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month) + coord_flip()
+  filter(`Crash Severity` == "Fatal")%>%
+  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month) + coord_flip()
 ```
 
 ```{r, fig.height = 15, fig.width = 15}
 #All types of crashes by month
 crashes%>%
   group_by(Month)%>%
-  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month)
+  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month)
 ```
