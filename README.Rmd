@@ -124,8 +124,17 @@ crashes%>%
   ggplot(aes(x = Light.Conditions)) +geom_bar() + coord_flip()
 ```
 
-```{r}
+```{r fig.height = 10, fig.width = 10}
+#Fatal Crashes by Day
 crashes%>%
+  group_by(Month)%>%
   filter(Crash.Severity == "Fatal")%>%
-  ggplot(aes(x = Day)) +geom_point()
+  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month) + coord_flip()
+```
+
+```{r, fig.height = 15, fig.width = 15}
+#All types of crashes by month
+crashes%>%
+  group_by(Month)%>%
+  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month)
 ```

@@ -1,6 +1,4 @@
 
-\#I love FORTNITE
-
 I love pufferfish
 
 The goal of our project is to find what variables are most prominent
@@ -335,3 +333,31 @@ Cause_crashes%>%filter(n > 100)
     ## 4 None apparent            Daylight                   Dry          Clear    1285
     ## 5 None apparent            Daylight                   Dry          Cloudy    463
     ## # … with abbreviated variable names ¹​Surface.Conditions, ²​Weather.Conditions
+
+``` r
+#Barplot of fatal crashes by light condition
+crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  ggplot(aes(x = Light.Conditions)) +geom_bar() + coord_flip()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+#Fatal Crashes by Day
+crashes%>%
+  group_by(Month)%>%
+  filter(Crash.Severity == "Fatal")%>%
+  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month) + coord_flip()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+#All types of crashes by month
+crashes%>%
+  group_by(Month)%>%
+  ggplot(aes(x = Day, fill = Crash.Severity)) +geom_bar() + facet_wrap(~Month)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
