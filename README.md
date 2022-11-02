@@ -3,8 +3,19 @@
 
 I love pufferfish
 
+The goal of our project is to find what variables are most prominent
+when causing crashes that are fatal, have significant crash severity, or
+cause the most property damage. The variables we are looking at right
+now include roadway type, roadway surface, environmental/weather
+conditions, and light conditions. Eventually, we would like to create a
+model to predict what conditions are most likely to cause serious
+injuries.
+
 ``` r
-crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
+#Use this if the below code doesn't work - file must be stored on your device.
+#crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
+crashes<- read.csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+
 View(crashes)
 ```
 
@@ -74,7 +85,7 @@ str(crashes)
     ##  $ Location                       : chr  "POINT (-90.567730450144 41.54429908431)" "POINT (-94.367629082433 41.76148937584)" "POINT (-92.944073472578 40.725020835225)" "POINT (-95.799893234639 42.801520512692)" ...
 
 ``` r
-#NA values sare only found in Amount of Property Damage?
+#NA values are only found in Amount of Property Damage?
 colSums(is.na(crashes))
 ```
 
@@ -140,6 +151,50 @@ crashes$Law.Enforcement.Case.Number <- as.integer(crashes$Law.Enforcement.Case.N
     ## Warning: NAs introduced by coercion to integer range
 
 ``` r
+#Checking NA sums after we made changes to the dataset
+colSums(is.na(crashes))
+```
+
+    ##            Iowa.DOT.Case.Number     Law.Enforcement.Case.Number 
+    ##                               0                          527840 
+    ##                   Date.of.Crash                  Month.of.Crash 
+    ##                               0                               0 
+    ##                     Day.of.Week                   Time.of.Crash 
+    ##                               0                               0 
+    ##                            Hour                    DOT.District 
+    ##                               0                               4 
+    ##                       City.Name                     County.Name 
+    ##                          279583                          109894 
+    ##               Route.with.System            Location.Description 
+    ##                          451161                               0 
+    ##             First.Harmful.Event Location.of.First.Harmful.Event 
+    ##                            2311                           23872 
+    ##       Manner.of.Crash.Collision                     Major.Cause 
+    ##                           51205                               0 
+    ##                 Drug.or.Alcohol        Environmental.Conditions 
+    ##                               0                           63550 
+    ##                Light.Conditions              Surface.Conditions 
+    ##                           71992                           72352 
+    ##              Weather.Conditions            Roadway.Contribution 
+    ##                           72784                           79089 
+    ##                    Roadway.Type                 Roadway.Surface 
+    ##                           68521                           50634 
+    ##                       Work.Zone                  Crash.Severity 
+    ##                          719474                               0 
+    ##            Number.of.Fatalities              Number.of.Injuries 
+    ##                               0                               0 
+    ##        Number.of.Major.Injuries        Number.of.Minor.Injuries 
+    ##                               0                               0 
+    ##     Number.of.Possible.Injuries      Number.of.Unknown.Injuries 
+    ##                               0                               0 
+    ##       Amount.of.Property.Damage     Number.of.Vehicles.Involved 
+    ##                               9                               0 
+    ##       Total.Number.of.Occupants                Travel.Direction 
+    ##                               0                          491785 
+    ##                        Location 
+    ##                               0
+
+``` r
 #Getting the distinct latitude and longitude
 crashes<- crashes%>%
   separate(col = Location, into = c(NA, "Latitude", "Longitude"), remove =
@@ -163,6 +218,7 @@ View(crashes)
 ```
 
 ``` r
+#Looking at the different crash severities
 crashes%>%
   group_by(Crash.Severity)%>%
   summarise(n = n())
@@ -178,6 +234,7 @@ crashes%>%
     ## 5 Property Damage Only 525724
 
 ``` r
+#Roadway contribution to fatal car accidents
 crashes%>%
   filter(Crash.Severity == "Fatal")%>%
   group_by(Roadway.Contribution)%>%
@@ -205,6 +262,7 @@ crashes%>%
     ## 16 <NA>                                             5
 
 ``` r
+#The count of roadway contributions by injury severity
 crashes%>%
   ggplot(aes(x = Roadway.Contribution)) +geom_bar() + facet_wrap(~Crash.Severity)+coord_flip()
 ```
@@ -212,6 +270,7 @@ crashes%>%
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
+#Map of all crashes in Iowa
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
@@ -221,6 +280,7 @@ crashes%>%
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
+#Crash severity grouped by roadway type
 crashes2<- crashes%>%
   group_by(Roadway.Type, Crash.Severity)%>%
   summarise(n = n())
@@ -238,3 +298,40 @@ crashes2[which.max(crashes2$n),]
     ##   Roadway.Type                                       Crash.Severity            n
     ##   <chr>                                              <chr>                 <int>
     ## 1 Non-intersection:  Non-junction/no special feature Property Damage Only 243391
+
+``` r
+#The top cause of fatal crashes
+crashes3<- crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  group_by(Major.Cause)%>%
+  summarise(n = n())
+
+View(crashes3[which.max(crashes3$n),])
+```
+
+``` r
+#Looking at the top environmental and surface conditions for fatal accidents
+Cause_crashes<- crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  group_by(Environmental.Conditions, Light.Conditions, Surface.Conditions, Weather.Conditions)%>%
+  summarise(n = n())
+```
+
+    ## `summarise()` has grouped output by 'Environmental.Conditions',
+    ## 'Light.Conditions', 'Surface.Conditions'. You can override using the `.groups`
+    ## argument.
+
+``` r
+Cause_crashes%>%filter(n > 100)
+```
+
+    ## # A tibble: 5 × 5
+    ## # Groups:   Environmental.Conditions, Light.Conditions, Surface.Conditions [3]
+    ##   Environmental.Conditions Light.Conditions           Surface.Co…¹ Weath…²     n
+    ##   <chr>                    <chr>                      <chr>        <chr>   <int>
+    ## 1 None apparent            Dark - roadway lighted     Dry          Clear     246
+    ## 2 None apparent            Dark - roadway not lighted Dry          Clear     623
+    ## 3 None apparent            Dark - roadway not lighted Dry          Cloudy    175
+    ## 4 None apparent            Daylight                   Dry          Clear    1285
+    ## 5 None apparent            Daylight                   Dry          Cloudy    463
+    ## # … with abbreviated variable names ¹​Surface.Conditions, ²​Weather.Conditions

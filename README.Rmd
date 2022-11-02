@@ -2,14 +2,15 @@
 output: github_document
 ---
 
-#I love FORTNITE
-
 I love pufferfish
+
+The goal of our project is to find what variables are most prominent when causing crashes that are fatal, have significant crash severity, or cause the most property damage. The variables we are looking at right now include roadway type, roadway surface, environmental/weather conditions, and light conditions. Eventually, we would like to create a model to predict what conditions are most likely to cause serious injuries.
 
 ```{r}
 #Use this if the below code doesn't work - file must be stored on your device.
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
 crashes<- read.csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+
 View(crashes)
 ```
 
@@ -21,7 +22,7 @@ library(ggplot2)
 dim(crashes)
 str(crashes)
 
-#NA values sare only found in Amount of Property Damage?
+#NA values are only found in Amount of Property Damage?
 colSums(is.na(crashes))
 
 #This is strange because it appears that City.Name has NA values
@@ -35,6 +36,9 @@ crashes[crashes=="N/A"]<-NA
 
 #Making the case number an integer
 crashes$Law.Enforcement.Case.Number <- as.integer(crashes$Law.Enforcement.Case.Number)
+
+#Checking NA sums after we made changes to the dataset
+colSums(is.na(crashes))
 ```
 
 ```{r}
@@ -57,12 +61,14 @@ View(crashes)
 ```
 
 ```{r}
+#Looking at the different crash severities
 crashes%>%
   group_by(Crash.Severity)%>%
   summarise(n = n())
 ```
 
 ```{r}
+#Roadway contribution to fatal car accidents
 crashes%>%
   filter(Crash.Severity == "Fatal")%>%
   group_by(Roadway.Contribution)%>%
@@ -70,20 +76,56 @@ crashes%>%
 ```
 
 ```{r}
+#The count of roadway contributions by injury severity
 crashes%>%
   ggplot(aes(x = Roadway.Contribution)) +geom_bar() + facet_wrap(~Crash.Severity)+coord_flip()
 ```
 
 ```{r}
+#Map of all crashes in Iowa
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
 
 ```{r}
+#Crash severity grouped by roadway type
 crashes2<- crashes%>%
   group_by(Roadway.Type, Crash.Severity)%>%
   summarise(n = n())
 
 crashes2[which.max(crashes2$n),]
 
+```
+
+```{r}
+#The top cause of fatal crashes
+crashes3<- crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  group_by(Major.Cause)%>%
+  summarise(n = n())
+
+View(crashes3[which.max(crashes3$n),])
+```
+
+```{r}
+#Looking at the top environmental and surface conditions for fatal accidents
+Cause_crashes<- crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  group_by(Environmental.Conditions, Light.Conditions, Surface.Conditions, Weather.Conditions)%>%
+  summarise(n = n())
+
+Cause_crashes%>%filter(n > 100)
+```
+
+```{r}
+#Barplot of fatal crashes by light condition
+crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  ggplot(aes(x = Light.Conditions)) +geom_bar() + coord_flip()
+```
+
+```{r}
+crashes%>%
+  filter(Crash.Severity == "Fatal")%>%
+  ggplot(aes(x = Day)) +geom_point()
 ```
