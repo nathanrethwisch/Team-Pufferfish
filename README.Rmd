@@ -7,18 +7,17 @@ I love pufferfish
 The goal of our project is to find what variables are most prominent when causing crashes that are fatal, have significant crash severity, or cause the most property damage. The variables we are looking at right now include roadway type, roadway surface, environmental/weather conditions, and light conditions. Eventually, we would like to create a model to predict what conditions are most likely to cause serious injuries.
 
 ```{r}
+library(tidyverse)
+
 #Use this if the below code doesn't work - file must be stored on your device.
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
-crashes<- read.csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
-View(crashes)
+#View(crashes)
 ```
 
 ```{r}
-library(tidyverse)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+
 dim(crashes)
 str(crashes)
 
