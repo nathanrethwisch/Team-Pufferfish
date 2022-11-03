@@ -13,7 +13,7 @@ library(tidyverse)
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
-View(crashes)
+#View(crashes)
 ```
 
 ```{r}
