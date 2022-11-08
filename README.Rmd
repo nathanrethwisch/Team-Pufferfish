@@ -177,7 +177,10 @@ crashes<- crashes %>% mutate(TimesOfDay =
                                (HourInt >=18) & (HourInt <21) ~"Evening")
 )
 View(crashes)
+
 crashes%>%
-  filter(`Crash Severity` == 'Fatal', !is.na(`Travel Direction`))%>%
+  filter(!is.na(`Travel Direction`))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip()
+
+
 ```
