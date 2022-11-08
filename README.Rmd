@@ -6,6 +6,10 @@ I love pufferfish
 
 The goal of our project is to find what variables are most prominent when causing crashes that are fatal, have significant crash severity, or cause the most property damage. The variables we are looking at right now include roadway type, roadway surface, environmental/weather conditions, and light conditions. Eventually, we would like to create a model to predict what conditions are most likely to cause serious injuries.
 
+Nathan:
+
+In addition to this, I will be exploring the relationship between amount of property damage and injury severity
+
 ```{r}
 library(tidyverse)
 
@@ -13,7 +17,7 @@ library(tidyverse)
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
-#View(crashes)
+View(crashes)
 ```
 
 ```{r}
@@ -32,6 +36,7 @@ crashes$`City Name`[crashes$`City Name` == ""] <- NA
 crashes$`County Name`[crashes$`County Name` == ""] <- NA
 crashes$`Route with System`[crashes$`Route with System` == ""] <- NA
 crashes[crashes=="N/A"]<-NA
+crashes$`Total Number of Occupants`[crashes$`Total Number of Occupants` == 777] <- NA
 
 #Making the case number an integer
 crashes$`Law Enforcement Case Number` <- as.integer(crashes$`Law Enforcement Case Number`)
@@ -136,4 +141,43 @@ crashes%>%
 crashes%>%
   group_by(Month)%>%
   ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month)
+```
+
+```{r}
+crashes%>%
+  filter(`Amount of Property Damage`<100000)%>%
+  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Injuries`)) + geom_point()
+  
+  
+```
+
+```{r}
+crashes%>%
+  filter(`Amount of Property Damage`<100000)%>%
+  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Minor Injuries`)) + geom_point()
+```
+
+```{r}
+crashes%>%
+  filter(`Amount of Property Damage`<100000)%>%
+  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Major Injuries`)) + geom_point()
+```
+
+```{r}
+library(dplyr)
+crashes$HourInt<- gsub("Hour ", "\\1", crashes$Hour)
+crashes$HourInt<- parse_integer(crashes$HourInt)
+View(crashes)
+
+
+crashes<- crashes %>% mutate(TimesOfDay =
+                     case_when((HourInt >20) | (HourInt <=5) ~"Night",
+                               (HourInt >5) & (HourInt <=11) ~"Morning",
+                               (HourInt >=12) & (HourInt <18) ~"Afternoon",
+                               (HourInt >=18) & (HourInt <21) ~"Evening")
+)
+View(crashes)
+crashes%>%
+  filter(`Crash Severity` == 'Fatal', !is.na(`Travel Direction`))%>%
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip()
 ```
