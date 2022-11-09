@@ -8,7 +8,7 @@ The goal of our project is to find what variables are most prominent when causin
 
 Nathan:
 
-In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents.
+In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents. I hypothesize that crashes will increase when going eastbound during the morning and decrease in the evening. For westbound drivers, the opposite should be true- crashes will increase in the evening/afternoon and decrease in the morning.
 
 ```{r}
 library(tidyverse)
