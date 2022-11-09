@@ -8,10 +8,13 @@ The goal of our project is to find what variables are most prominent when causin
 
 Nathan:
 
-In addition to this, I will be exploring the relationship between amount of property damage and injury severity
+In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents.
 
 ```{r}
 library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 
 #Use this if the below code doesn't work - file must be stored on your device.
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
@@ -164,7 +167,7 @@ crashes%>%
 ```
 
 ```{r}
-library(dplyr)
+#Crashes by direction
 crashes$HourInt<- gsub("Hour ", "\\1", crashes$Hour)
 crashes$HourInt<- parse_integer(crashes$HourInt)
 View(crashes)
@@ -179,8 +182,32 @@ crashes<- crashes %>% mutate(TimesOfDay =
 View(crashes)
 
 crashes%>%
-  filter(!is.na(`Travel Direction`))%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip()
 
+
+```
+
+```{r}
+#Fatal crashes per month by time of day
+crashes%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'), `Crash Severity` == "Fatal")%>%
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month)
+```
+
+```{r}
+#All crashes by month and time of day and direction of travel
+crashes%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month)
+```
+
+```{r}
+crashes%>%
+  ggplot(aes(x = `HourInt`)) + geom_bar() + facet_wrap(~Month)
+
+```
+
+```{r}
 
 ```
