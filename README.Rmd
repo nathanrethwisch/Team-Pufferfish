@@ -19,22 +19,11 @@ I will be exploring the relationship between accidents as they are related to al
 
 ```{r}
 library(tidyverse)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 
 #Use this if the below code doesn't work - file must be stored on your device.
 #crashes <- read.csv("../Vehicle_Crashes_in_Iowa.csv")
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-View(crashes)
->>>>>>> 5f02e12316fa6f8646b30d38d688d1300f5cfdf1
-=======
-#View(crashes)
->>>>>>> 2c264de6fa210fc7d7049fb0821a53fefafd17dd
 ```
 
 ```{r}
