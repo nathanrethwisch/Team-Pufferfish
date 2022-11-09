@@ -16,7 +16,6 @@ I will be exploring the relationship between accidents as they are related to al
 
 -We have not heard from Calvin
 
-
 ```{r}
 library(tidyverse)
 
