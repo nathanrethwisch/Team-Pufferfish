@@ -10,6 +10,8 @@ Nathan:
 
 In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents. I hypothesize that crashes will increase when going eastbound during the morning and decrease in the evening. For westbound drivers, the opposite should be true- crashes will increase in the evening/afternoon and decrease in the morning.
 
+-We have not heard from Calvin
+
 ```{r}
 library(tidyverse)
 library(dplyr)
