@@ -10,6 +10,10 @@ Nathan:
 
 In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents. I hypothesize that crashes will increase when going eastbound during the morning and decrease in the evening. For westbound drivers, the opposite should be true- crashes will increase in the evening/afternoon and decrease in the morning.
 
+Zack:
+
+I will be exploring the relationship between accidents as they are related to alcohol or substance use and time of week. I want to see if substance related accidents cause more property damage and/or injuries and if substance related accidents are more likely to occur at night or on the weekends. I hypothesize that alcohol based incidents will results in more damage than normal accidents, and that alcohol and other substance based accidents will happen more often at night and on the weekends.
+
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -49,6 +53,7 @@ crashes$`Law Enforcement Case Number` <- as.integer(crashes$`Law Enforcement Cas
 
 #Checking NA sums after we made changes to the dataset
 colSums(is.na(crashes))
+
 ```
 
 ```{r}
