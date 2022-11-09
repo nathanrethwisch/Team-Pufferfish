@@ -14,6 +14,9 @@ Zack:
 
 I will be exploring the relationship between accidents as they are related to alcohol or substance use and time of week. I want to see if substance related accidents cause more property damage and/or injuries and if substance related accidents are more likely to occur at night or on the weekends. I hypothesize that alcohol based incidents will results in more damage than normal accidents, and that alcohol and other substance based accidents will happen more often at night and on the weekends.
 
+-We have not heard from Calvin
+
+
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -25,9 +28,13 @@ library(ggplot2)
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 View(crashes)
 >>>>>>> 5f02e12316fa6f8646b30d38d688d1300f5cfdf1
+=======
+#View(crashes)
+>>>>>>> 2c264de6fa210fc7d7049fb0821a53fefafd17dd
 ```
 
 ```{r}
@@ -35,11 +42,11 @@ View(crashes)
 dim(crashes)
 str(crashes)
 
-#NA values are only found in Amount of Property Damage?
+#NA values are only found in a few values?
 colSums(is.na(crashes))
 
-#This is strange because it appears that City.Name has NA values
-sum(is.na(crashes$`City Name`))
+#This is strange because it appears that Weather Conditions has NA values
+sum(is.na(crashes$`Weather Conditions`))
 
 #Making blank and N/A value in NA
 crashes$`City Name`[crashes$`City Name` == ""] <- NA
@@ -72,7 +79,7 @@ crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
 crashes <- crashes%>%
   separate(col = `Date of Crash`, into = c("Year", "Month", "Day"), remove =
              FALSE, sep = "-")
-View(crashes)
+#View(crashes)
 ```
 
 ```{r}
@@ -178,7 +185,7 @@ crashes%>%
 #Crashes by direction
 crashes$HourInt<- gsub("Hour ", "\\1", crashes$Hour)
 crashes$HourInt<- parse_integer(crashes$HourInt)
-View(crashes)
+#View(crashes)
 
 
 crashes<- crashes %>% mutate(TimesOfDay =
@@ -187,7 +194,7 @@ crashes<- crashes %>% mutate(TimesOfDay =
                                (HourInt >=12) & (HourInt <18) ~"Afternoon",
                                (HourInt >=18) & (HourInt <21) ~"Evening")
 )
-View(crashes)
+#View(crashes)
 
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
