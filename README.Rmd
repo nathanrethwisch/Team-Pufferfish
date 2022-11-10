@@ -199,6 +199,20 @@ crashes%>%
 ```
 
 ```{r}
+crashes%>%
+  filter(`Month` == "08", `Crash Severity` == "Fatal", `Travel Direction` == "Eastbound (EB)")%>%
+  group_by(Day)%>%
+  summarise(n = n())
+```
+
+```{r}
+crashes%>%
+  filter(`Month` == "06", `Crash Severity` == "Fatal", `Travel Direction` == "Westbound (WB)")%>%
+  group_by(Day)%>%
+  summarise(n = n())
+```
+
+```{r}
 #All crashes by month and time of day and direction of travel
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
