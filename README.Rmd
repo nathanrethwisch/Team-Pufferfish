@@ -171,16 +171,16 @@ crashes%>%
 
 ```{r}
 #Crashes by direction
-crashes$HourInt<- gsub("Hour ", "\\1", crashes$Hour)
-crashes$HourInt<- parse_integer(crashes$HourInt)
+crashes$Hour<- gsub("Hour ", "\\1", crashes$Hour)
+crashes$Hour<- parse_integer(crashes$Hour)
 #View(crashes)
 
 
 crashes<- crashes %>% mutate(TimesOfDay =
-                     case_when((HourInt >20) | (HourInt <=5) ~"Night",
-                               (HourInt >5) & (HourInt <=11) ~"Morning",
-                               (HourInt >=12) & (HourInt <18) ~"Afternoon",
-                               (HourInt >=18) & (HourInt <21) ~"Evening")
+                     case_when((Hour >20) | (Hour <=5) ~"Night",
+                               (Hour >5) & (Hour <=11) ~"Morning",
+                               (Hour >=12) & (Hour <18) ~"Afternoon",
+                               (Hour >=18) & (Hour <21) ~"Evening")
 )
 #View(crashes)
 
@@ -221,7 +221,7 @@ crashes%>%
 
 ```{r}
 crashes%>%
-  ggplot(aes(x = `HourInt`)) + geom_bar() + facet_wrap(~Month)
+  ggplot(aes(x = `Hour`)) + geom_bar() + facet_wrap(~Month)
 
 ```
 
@@ -233,7 +233,6 @@ page <- read_html("https://www.timeanddate.com/sun/@4846834?month=11&year=2021")
 tables <- page %>% html_table(fill = TRUE)
 tables %>% str
 weather<- tables[[2]]
-weather
 
 names(weather)[1] <- "Date"
 names(weather)[2] <- "Sunrise"
@@ -242,21 +241,59 @@ weather2 <-weather[14:16]
 names(weather2)[1] <- "Date"
 names(weather2)[2] <- "Sunrise"
 names(weather2)[3] <- "Sunset"
-View(weather)
+#View(weather)
 
 weather2$Date <- as.character(weather2$Date)
-
 weather <- weather[1:3]
 
 final_weather <- full_join(na.omit(weather), na.omit(weather2))
 final_weather <- final_weather[-8,]
-final_weather$Month <- "November"
-final_weather[1,]<- final_weather[33,]
+final_weather[1,]<- final_weather[nrow(final_weather),]
 final_weather <- final_weather[-2,]
-final_weather <- final_weather[-31:-32,]
+final_weather <- final_weather[-nrow(final_weather)+1: -nrow(final_weather),]
+#final_weather <- final_weather[-nrow(final_weather),]
+
+View(final_weather)
+
+
+
+#Ones that are debatable
+final_weather$Month <- 11
+
+
 ```
 
 ```{r}
-final_weather$Sunrise <- final_weather$Sunrise
+final_weather<-final_weather%>%
+  separate(col = Sunrise, into = c("Sunrise Time", NA), remove = TRUE, sep = " ↑")
 
+final_weather<-final_weather%>%
+  separate(col = Sunset, into = c("Sunset Time", NA), remove = TRUE, sep = " ↑")
+
+final_weather
+
+
+```
+
+```{r}
+crashes%>%
+  ggplot(aes(x = `Time of Crash`)) + geom_bar() + facet_wrap(~Month)
+```
+
+```{r}
+library(hms)
+final_weather$`Sunset Time` <- format(strptime(final_weather$`Sunset Time`, "%I:%M %p"), format="%H:%M:%S")
+
+final_weather$`Sunrise Time` <- format(strptime(final_weather$`Sunrise Time`, "%I:%M %p"), format="%H:%M:%S")
+
+final_weather$`Sunrise Time` <- as_hms(final_weather$`Sunrise Time`)
+final_weather$`Sunset Time` <- as_hms(final_weather$`Sunset Time`)
+```
+
+```{r}
+crashes$Month<- gsub("Month ", "\\1", crashes$Month)
+crashes$Month<- parse_integer(crashes$Month)
+
+crashes$Day <- sub("^0+", "", crashes$Day)       
+crashes$Day<- parse_integer(crashes$Day)
 ```
