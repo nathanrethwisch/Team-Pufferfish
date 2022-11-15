@@ -226,5 +226,37 @@ crashes%>%
 ```
 
 ```{r}
+#install.packages("rvest")
+library(rvest)
+library(dplyr)
+page <- read_html("https://www.timeanddate.com/sun/@4846834?month=11&year=2021")
+tables <- page %>% html_table(fill = TRUE)
+tables %>% str
+weather<- tables[[2]]
+weather
+
+names(weather)[1] <- "Date"
+names(weather)[2] <- "Sunrise"
+names(weather)[3] <- "Sunset"
+weather2 <-weather[14:16]
+names(weather2)[1] <- "Date"
+names(weather2)[2] <- "Sunrise"
+names(weather2)[3] <- "Sunset"
+View(weather)
+
+weather2$Date <- as.character(weather2$Date)
+
+weather <- weather[1:3]
+
+final_weather <- full_join(na.omit(weather), na.omit(weather2))
+final_weather <- final_weather[-8,]
+final_weather$Month <- "November"
+final_weather[1,]<- final_weather[33,]
+final_weather <- final_weather[-2,]
+final_weather <- final_weather[-31:-32,]
+```
+
+```{r}
+final_weather$Sunrise <- final_weather$Sunrise
 
 ```
