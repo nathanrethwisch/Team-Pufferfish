@@ -240,7 +240,7 @@ crashes%>%
 #install.packages("rvest")
 library(rvest)
 library(dplyr)
-page <- read_html("https://www.timeanddate.com/sun/@4846834?month=2&year=2020")
+page <- read_html("https://www.timeanddate.com/sun/@4846834?month=3&year=2020")
 tables <- page %>% html_table(fill = TRUE)
 tables %>% str
 weather<- tables[[2]]
@@ -279,20 +279,69 @@ View(final_weather)
 ```
 
 ```{r}
+library(rvest)
+library(dplyr)
+library(hms)
+dfmonth <- function(url, number) {
+page <- read_html(url)
+tables <- page %>% html_table(fill = TRUE)
+tables %>% str
+weather<- tables[[2]]
 
+names(weather)[1] <- "Date"
+names(weather)[2] <- "Sunrise"
+names(weather)[3] <- "Sunset"
+#View(weather)
+weather2 <-weather[14:16]
+#View(weather)
+names(weather2)[1] <- "Date"
+names(weather2)[2] <- "Sunrise"
+names(weather2)[3] <- "Sunset"
+#View(weather)
 
-```
+weather2$Date <- as.character(weather2$Date)
+weather <- weather[1:3]
 
-```{r}
+final_weather <- full_join(na.omit(weather), na.omit(weather2))
+final_weather[1,]<- final_weather[nrow(final_weather),]
+final_weather <- final_weather[-2,]
+final_weather <- final_weather[-nrow(final_weather)+1: -nrow(final_weather),]
+
+if (any(final_weather == "Note: hours shift because clocks change forward 1 hour. (See the note below this table for details)")){
+  final_weather <-final_weather[-which(final_weather$Sunrise ==  "Note: hours shift because clocks change forward 1 hour. (See the note below this table for details)"),]
+} else if (any(final_weather == "Note: hours shift because clocks change backward 1 hour. (See the note below this table for details)")){
+  final_weather <- final_weather[-which(final_weather$Sunrise == "Note: hours shift because clocks change backward 1 hour. (See the note below this table for details)"),]
+}
+
+final_weather$Month <- number
+  
 final_weather<-final_weather%>%
   separate(col = Sunrise, into = c("Sunrise Time", NA), remove = TRUE, sep = " ↑")
 
 final_weather<-final_weather%>%
   separate(col = Sunset, into = c("Sunset Time", NA), remove = TRUE, sep = " ↑")
 
-final_weather
+final_weather$`Sunset Time` <- format(strptime(final_weather$`Sunset Time`, "%I:%M %p"), format="%H:%M:%S")
 
+final_weather$`Sunrise Time` <- format(strptime(final_weather$`Sunrise Time`, "%I:%M %p"), format="%H:%M:%S")
 
+final_weather$`Sunrise Time` <- as_hms(final_weather$`Sunrise Time`)
+final_weather$`Sunset Time` <- as_hms(final_weather$`Sunset Time`)
+
+  return (final_weather)
+}
+
+```
+
+```{r}
+sun<- dfmonth("https://www.timeanddate.com/sun/@4846834?month=1&year=2020", 1)
+for (i in 2:12){
+  url<- paste0("https://www.timeanddate.com/sun/@4846834?month=", i, "&year=2020")
+  dfTemp<- dfmonth(url, i)
+  sun<- full_join(sun, dfTemp)
+  
+}
+View(sun)
 ```
 
 ```{r}
@@ -301,19 +350,35 @@ crashes%>%
 ```
 
 ```{r}
-library(hms)
-final_weather$`Sunset Time` <- format(strptime(final_weather$`Sunset Time`, "%I:%M %p"), format="%H:%M:%S")
-
-final_weather$`Sunrise Time` <- format(strptime(final_weather$`Sunrise Time`, "%I:%M %p"), format="%H:%M:%S")
-
-final_weather$`Sunrise Time` <- as_hms(final_weather$`Sunrise Time`)
-final_weather$`Sunset Time` <- as_hms(final_weather$`Sunset Time`)
-```
-
-```{r}
 crashes$Month<- gsub("Month ", "\\1", crashes$Month)
 crashes$Month<- parse_integer(crashes$Month)
 
 crashes$Day <- sub("^0+", "", crashes$Day)       
 crashes$Day<- parse_integer(crashes$Day)
+```
+
+```{r}
+sun$Date <- as.integer(sun$Date)
+  
+df<- left_join(crashes, sun, by = c("Day" = "Date", "Month" = "Month"))
+View(df)
+```
+
+```{r}
+df$sunsetDiff = abs(difftime(df$`Time of Crash`, df$`Sunset Time`, unit = 'mins'))
+df$sunriseDiff = abs(difftime(df$`Time of Crash`, df$`Sunrise Time`, unit = 'mins'))
+df$sunDiff <- with(df,pmin(sunsetDiff, sunriseDiff))
+df$sunDiff
+
+df%>%
+  ggplot(aes(x = sunriseDiff)) + geom_bar() + facet_wrap(~Month)
+```
+
+```{r}
+df%>%
+  ggplot(aes(x = sunsetDiff)) + geom_bar() + facet_wrap(~Month)
+```
+
+```{r}
+
 ```
