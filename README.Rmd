@@ -341,7 +341,7 @@ for (i in 2:12){
   sun<- full_join(sun, dfTemp)
   
 }
-View(sun)
+#View(sun)
 ```
 
 ```{r}
@@ -361,24 +361,83 @@ crashes$Day<- parse_integer(crashes$Day)
 sun$Date <- as.integer(sun$Date)
   
 df<- left_join(crashes, sun, by = c("Day" = "Date", "Month" = "Month"))
-View(df)
+#View(df)
 ```
 
 ```{r}
-df$sunsetDiff = abs(difftime(df$`Time of Crash`, df$`Sunset Time`, unit = 'mins'))
-df$sunriseDiff = abs(difftime(df$`Time of Crash`, df$`Sunrise Time`, unit = 'mins'))
-df$sunDiff <- with(df,pmin(sunsetDiff, sunriseDiff))
-df$sunDiff
+df$sunsetDiff = difftime(df$`Time of Crash`, df$`Sunset Time`, unit = 'mins')
+df$sunriseDiff = difftime(df$`Time of Crash`, df$`Sunrise Time`, unit = 'mins')
+df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 
 df%>%
-  ggplot(aes(x = sunriseDiff)) + geom_bar() + facet_wrap(~Month)
+  group_by(Month, sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)
 ```
 
 ```{r}
 df%>%
-  ggplot(aes(x = sunsetDiff)) + geom_bar() + facet_wrap(~Month)
+  group_by(Month, sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)
+```
+
+We do have some skewed left graphs - meaning crashes are more likely to be close to sunset
+
+```{r}
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()
 ```
 
 ```{r}
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_point()
+```
 
+```{r}
+df%>%
+  group_by(sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+```
+
+```{r}
+df%>%
+  group_by(sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+```
+
+```{r}
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()
+```
+
+```{r}
+df%>%
+  group_by(sunsetDiff, `Travel Direction`)%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+```
+
+```{r}
+df%>%
+  group_by(sunriseDiff, `Travel Direction`)%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+```
+
+```{r}
+df%>%
+  group_by(`Crash Severity`, sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)
 ```
