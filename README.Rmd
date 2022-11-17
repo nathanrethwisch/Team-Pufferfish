@@ -335,9 +335,9 @@ sum(is.na(sun$`Sunset Time`))
 ```{r}
 #A line chart that loooks at crashes by time of crash
 crashes%>%
-  group_by(`Time of Crash`, Month)%>%
+  group_by(`Time of Crash`)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line() + facet_wrap(~Month)
+  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line()
 ```
 
 ```{r}
