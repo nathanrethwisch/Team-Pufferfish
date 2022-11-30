@@ -1,5 +1,5 @@
 ---
-output: html_document
+output: md_document
 ---
 
 I love pufferfish
@@ -13,6 +13,7 @@ In addition to this, I will be exploring the relationship accidents and time of 
 Zack:
 
 I will be exploring the relationship between accidents as they are related to alcohol or substance use and time of week. I want to see if substance related accidents cause more property damage and/or injuries and if substance related accidents are more likely to occur at night or on the weekends. I hypothesize that alcohol based incidents will results in more damage than normal accidents, and that alcohol and other substance based accidents will happen more often at night and on the weekends.
+
 
 
 ```{r}
@@ -91,7 +92,7 @@ crashes%>%
 ```
 
 ```{r}
-#Map of all crashes in Iowa
+#Map of all crashes in Iowa. This shows that the data comes from all over the state
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
@@ -149,6 +150,7 @@ crashes%>%
 ```
 
 ```{r}
+#Number of injuries for crashes with under $100,000 in property damage
 crashes%>%
   filter(`Amount of Property Damage`<100000)%>%
   ggplot(aes(x = `Amount of Property Damage`, y = `Number of Injuries`)) + geom_point()
@@ -157,12 +159,14 @@ crashes%>%
 ```
 
 ```{r}
+#Amount of minior injuries for crashes with under $100,000 in property damage
 crashes%>%
   filter(`Amount of Property Damage`<100000)%>%
   ggplot(aes(x = `Amount of Property Damage`, y = `Number of Minor Injuries`)) + geom_point()
 ```
 
 ```{r}
+#
 crashes%>%
   filter(`Amount of Property Damage`<100000)%>%
   ggplot(aes(x = `Amount of Property Damage`, y = `Number of Major Injuries`)) + geom_point()
@@ -170,19 +174,24 @@ crashes%>%
 
 ```{r}
 #Crashes by direction
-crashes$HourInt<- gsub("Hour ", "\\1", crashes$Hour)
-crashes$HourInt<- parse_integer(crashes$HourInt)
+crashes$Hour<- gsub("Hour ", "\\1", crashes$Hour)
+crashes$Hour<- parse_integer(crashes$Hour)
 #View(crashes)
 
-
+#Creating different times of day
+#9pm-4am is night
+#5am-11am is morning
+#12pm-5pm is the afternoon
+#6pm-9pm is the evening
 crashes<- crashes %>% mutate(TimesOfDay =
-                     case_when((HourInt >20) | (HourInt <=5) ~"Night",
-                               (HourInt >5) & (HourInt <=11) ~"Morning",
-                               (HourInt >=12) & (HourInt <18) ~"Afternoon",
-                               (HourInt >=18) & (HourInt <21) ~"Evening")
+                     case_when((Hour >20) | (Hour < 5) ~"Night",
+                               (Hour >=5) & (Hour <=11) ~"Morning",
+                               (Hour >=12) & (Hour <17) ~"Afternoon",
+                               (Hour >=17) & (Hour <21) ~"Evening")
 )
-#View(crashes)
 
+#Plotting crashes by time of day and travel direction
+#There seems to be little difference, but sunset and sunrise times are changing, so it is hard to know when sunset and sunrise actually is happening
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip()
@@ -198,18 +207,240 @@ crashes%>%
 ```
 
 ```{r}
-#All crashes by month and time of day and direction of travel
+#Looking at above data, there seems to be a lot of fatal crashse travelling easbound in August, but there are no major crash events to cause this. Perhaps people are travelling east on the way home from vacation?
+crashes%>%
+  filter(`Month` == "08", `Crash Severity` == "Fatal", `Travel Direction` == "Eastbound (EB)")%>%
+  group_by(Day)%>%
+  summarise(n = n())
+```
+
+```{r}
+#There are also a lot of crashes travelling westbound in June, maybe people are going west for the summer? This could also be thrown off due to the small amount of fatal crashes
+crashes%>%
+  filter(`Month` == "06", `Crash Severity` == "Fatal", `Travel Direction` == "Westbound (WB)")%>%
+  group_by(Day)%>%
+  summarise(n = n())
+```
+
+```{r}
+#All crashes by month and time of day and direction of travel - this shows a smoother distribution
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month)
 ```
 
 ```{r}
+#Looking at a scatterplot of crashes by hour per month. There seem to be some pretty high peeks in the aftenoons of November and December
 crashes%>%
-  ggplot(aes(x = `HourInt`)) + geom_bar() + facet_wrap(~Month)
+  group_by(Hour, Month)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `Hour`, y =n)) + geom_line() + facet_wrap(~Month)
+```
+
+```{r}
+#Using rvest to extract sunrise and sunset data
+library(rvest)
+library(dplyr)
+library(hms)
+
+#A function that takes in the url and month number
+dfmonth <- function(url, number) {
+  
+#Extraction of the table
+page <- read_html(url)
+tables <- page %>% html_table(fill = TRUE)
+tables %>% str
+weather<- tables[[2]]
+
+#Setting names to date, sunrise, and sunset
+names(weather)[1] <- "Date"
+names(weather)[2] <- "Sunrise"
+names(weather)[3] <- "Sunset"
+
+#The first day for each month in the dataframe is in it's own column, so I created a new dataframe with the pertinent intformation and renamed those columns
+weather2 <-weather[14:16]
+names(weather2)[1] <- "Date"
+names(weather2)[2] <- "Sunrise"
+names(weather2)[3] <- "Sunset"
+
+#I then changed the Date to a character so it can be merged with the other data
+weather2$Date <- as.character(weather2$Date)
+
+#I select only the pertinent data from the original weather data set
+weather <- weather[1:3]
+
+#Next, I join the data sets while omitting NA values
+final_weather <- full_join(na.omit(weather), na.omit(weather2))
+
+#The first day in the dataset will be at the end, so I move it towards the front
+final_weather[1,]<- final_weather[nrow(final_weather),]
+
+#Next, I remove the labels that stuck onto this dataset that are unnecessary
+final_weather <- final_weather[-2,]
+
+#The last two rows are removed because they contain a copy of day 1 and some additional information from the webpage
+final_weather <- final_weather[-nrow(final_weather)+1: -nrow(final_weather),]
+
+#These loops are to deal with notices for time changes. If there is a time change notice in the dataframe, they are removed.
+if (any(final_weather == "Note: hours shift because clocks change forward 1 hour. (See the note below this table for details)")){
+  final_weather <-final_weather[-which(final_weather$Sunrise ==  "Note: hours shift because clocks change forward 1 hour. (See the note below this table for details)"),]
+} else if (any(final_weather == "Note: hours shift because clocks change backward 1 hour. (See the note below this table for details)")){
+  final_weather <- final_weather[-which(final_weather$Sunrise == "Note: hours shift because clocks change backward 1 hour. (See the note below this table for details)"),]
+}
+
+#Creating a new column that corresponds to the month number
+final_weather$Month <- number
+  
+#Seperating additional informatoin from the sunset and sunrise times in the graph
+final_weather<-final_weather%>%
+  separate(col = Sunrise, into = c("Sunrise Time", NA), remove = TRUE, sep = " ↑")
+
+final_weather<-final_weather%>%
+  separate(col = Sunset, into = c("Sunset Time", NA), remove = TRUE, sep = " ↑")
+
+#Making the sunset time in Hour:Minute:Second format
+final_weather$`Sunset Time` <- format(strptime(final_weather$`Sunset Time`, "%I:%M %p"), format="%H:%M:%S")
+
+final_weather$`Sunrise Time` <- format(strptime(final_weather$`Sunrise Time`, "%I:%M %p"), format="%H:%M:%S")
+
+#Making the data type of sunset and sunrise an hms so it can be compared to the original data
+final_weather$`Sunrise Time` <- as_hms(final_weather$`Sunrise Time`)
+final_weather$`Sunset Time` <- as_hms(final_weather$`Sunset Time`)
+
+#Returns the altered dataframe
+  return (final_weather)
+}
 
 ```
 
 ```{r}
+#Creating a dataframe using my previous function in the month January
+#I'm choosing 2020 because it is the most recent leap year - so I will have data for February 29th. I'm choosing Ames because it is close to the geographical center of Iowa
+sun<- dfmonth("https://www.timeanddate.com/sun/@4846834?month=1&year=2020", 1)
 
+#For the rest of the months, I run this loop and join them with the dataframe
+for (i in 2:12){
+  url<- paste0("https://www.timeanddate.com/sun/@4846834?month=", i, "&year=2020")
+  dfTemp<- dfmonth(url, i)
+  sun<- full_join(sun, dfTemp)
+  
+}
+
+#Checking if there are any null values 
+sum(is.na(sun$`Sunrise Time`))
+sum(is.na(sun$`Date`))
+sum(is.na(sun$`Sunset Time`))
+```
+
+```{r}
+#A line chart that loooks at crashes by time of crash
+crashes%>%
+  group_by(`Time of Crash`)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line()
+```
+
+```{r}
+crashes$Month<- gsub("Month ", "\\1", crashes$Month)
+crashes$Month<- parse_integer(crashes$Month)
+
+crashes$Day <- sub("^0+", "", crashes$Day)       
+crashes$Day<- parse_integer(crashes$Day)
+```
+
+```{r}
+#I needed to convert the Date back to integer so I could join with original data
+sun$Date <- as.integer(sun$Date)
+  
+#Joining the original data and scraped data by day and month
+df<- left_join(crashes, sun, by = c("Day" = "Date", "Month" = "Month"))
+```
+
+```{r}
+#Finding the difference between the sunset time and the time of the crash
+df$sunsetDiff = difftime(df$`Time of Crash`, df$`Sunset Time`, unit = 'mins')
+df$sunriseDiff = difftime(df$`Time of Crash`, df$`Sunrise Time`, unit = 'mins')
+df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
+
+#Looking at the difference between sunset and time of the crash by month
+df%>%
+  group_by(Month, sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)
+```
+
+```{r}
+#Looking at the difference between sunrise and time of the crash by month
+df%>%
+  group_by(Month, sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)
+```
+
+We do have some skewed left graphs - meaning crashes are more likely to be close to sunset
+
+```{r}
+#A graph of all crashes by the difference between crash time and sunset
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()
+```
+
+```{r}
+#Shows the same in a scatterplot, just in case there are outliers
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_point()
+```
+
+```{r}
+#A fitted line for the difference between sunset and crash time
+df%>%
+  group_by(sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()
+```
+
+```{r}
+#A graph of all crashes by the difference between crash time and sunrise, with a fitted line
+df%>%
+  group_by(sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+```
+
+```{r}
+#Just the fitted line from the previous data
+df%>%
+  group_by(sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+```
+
+```{r}
+#Looking at sunset vs. crash time going different directions
+df%>%
+  group_by(sunsetDiff, `Travel Direction`)%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+```
+
+```{r}
+#Looking at sunrise vs. crash time going different directions
+df%>%
+  group_by(sunriseDiff, `Travel Direction`)%>%
+  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+```
+
+```{r}
+#Looking at different crash severities with sunset vs. crash time
+df%>%
+  group_by(`Crash Severity`, sunsetDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)
 ```
