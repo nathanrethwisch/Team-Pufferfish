@@ -38,9 +38,33 @@ c <- c %>%
 
 
 ```{r}
+# Total cost of crashes without substance abuse
+(false_total_cost <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Amount of Property Damage`) %>%
+  sum(na.rm=TRUE))
 
+# Total number of crashes
+(false_rows <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Amount of Property Damage`) %>%
+  nrow())
+  
+# Average property damage of crash without substance abuse
+false_total_cost / false_rows
 
+(true_total_cost <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Amount of Property Damage`) %>%
+  sum(na.rm=TRUE))
 
+(true_rows <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Amount of Property Damage`) %>%
+  nrow())
+
+# Average property damage of crash with substance abuse
+true_total_cost / true_rows
 ```
 
 
