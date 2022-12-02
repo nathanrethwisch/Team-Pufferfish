@@ -38,36 +38,111 @@ c <- c %>%
 
 
 ```{r}
+# Total number of crashes without substance abuse
+(false_rows <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Amount of Property Damage`) %>%
+  nrow())
+
+# Total amount of crashes with substance abuse
+(true_rows <- nrow(c) - false_rows)
+```
+
+
+
+```{r}
 # Total cost of crashes without substance abuse
 (false_total_cost <- c %>%
   filter(Drug_Usage == FALSE) %>%
   select(`Amount of Property Damage`) %>%
   sum(na.rm=TRUE))
 
-# Total number of crashes
-(false_rows <- c %>%
-  filter(Drug_Usage == FALSE) %>%
-  select(`Amount of Property Damage`) %>%
-  nrow())
-  
-# Average property damage of crash without substance abuse
-false_total_cost / false_rows
-
+# Total cost of crashes with substance abuse
 (true_total_cost <- c %>%
   filter(Drug_Usage == TRUE) %>%
   select(`Amount of Property Damage`) %>%
   sum(na.rm=TRUE))
-
-(true_rows <- c %>%
-  filter(Drug_Usage == TRUE) %>%
-  select(`Amount of Property Damage`) %>%
-  nrow())
+  
+# Average property damage of crash without substance abuse
+false_total_cost / false_rows
 
 # Average property damage of crash with substance abuse
 true_total_cost / true_rows
+
 ```
 
 
+```{r}
+# Total number of injuries with and without substance abuse
+(false_total_inj <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Number of Injuries`) %>%
+  sum(na.rm=TRUE))
+
+(true_total_inj <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Number of Injuries`) %>%
+  sum(na.rm=TRUE))
+
+# Average injuries per accident without substance abuse
+false_total_inj / false_rows
+
+# Average injuries per accident with substance abuse
+true_total_inj / true_rows
+
+```
+
+```{r}
+# Total number of fatalities with and without substance abuse
+(false_total_fatal <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Number of Fatalities`) %>%
+  sum(na.rm=TRUE))
+
+(true_total_fatal <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Number of Fatalities`) %>%
+  sum(na.rm=TRUE))
+
+# Average fatalities per accident without substance abuse
+false_total_fatal / false_rows
+
+# Average fatalities per accident with substance abuse
+true_total_fatal / true_rows
+
+```
+
+```{r}
+c <- c %>%
+  mutate(Hour = parse_number(Hour))
+
+# Plot of all crashes by the hour
+c %>%
+  ggplot(aes(x=Hour)) + geom_bar()
+# Most crashes happen during "rush hour" from 4 to 6 P.M.
+
+# Plot of all crashes with sustance abuse by the hour
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Hour)) + geom_bar()
+# Most crashes with substances involved happen from 11 P.M. to 3 A.M.
+
+c_night <- c %>%
+  filter(Hour >= 22 | Hour <= 3)
+
+(total_night <- nrow(c_night))
+
+(true_total_night <- c_night %>%
+  filter(Drug_Usage == TRUE) %>%
+  nrow())
+
+# Crashes with substances are 4% of all crashes
+true_rows / nrow(c)
+
+# Crashes with substances are 14% of all crashes from 10 P.M. to 3 A.M.
+true_total_night / total_night
+
+```
 
 
 
