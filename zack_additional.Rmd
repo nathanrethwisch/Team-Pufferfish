@@ -144,6 +144,58 @@ true_total_night / total_night
 
 ```
 
+```{r}
+# Plot of all crashes by day of the week
+c %>%
+  ggplot(aes(x=`Day of Week`)) + geom_bar()
+# Crashes occur pretty much uniformly throughout the week
+#
+# Slight uptick on Friday, people driving home more recklessly to get
+# home faster?
+
+# Plot of all crashes with substance abuse by day of the week
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=`Day of Week`)) + geom_bar()
+# Majority of these crashes occur on the weekends, Saturday and Sunday are
+# likely higher than Friday because they happen early in the "morning" after
+# Friday and Saturday nights
+
+```
+
+
+```{r}
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Month)) + geom_bar()
+
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
+
+c %>%
+  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
+
+c %>%
+  filter(Month == 12) %>%
+  ggplot(aes(x=Day)) + geom_bar()
+
+c %>%
+  filter(Month == "01") %>%
+  ggplot(aes(x=Day)) + geom_bar()
+
+c %>%
+  filter(Month == "01" & Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Day)) + geom_bar()
+
+c %>%
+  filter(Month == "04" & Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Day)) + geom_bar()
+
+
+
+
+```
 
 
 
