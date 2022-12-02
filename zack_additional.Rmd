@@ -1,0 +1,52 @@
+---
+title: "zack_additional"
+author: "Zack Swayne"
+date: "2022-11-30"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+
+# Creates new data set to do modifications on
+c <- crashes
+
+# Changes the drug or alcohol column to a factor so that all the levels can be
+# found
+c$`Drug or Alcohol` <- as.factor(c$`Drug or Alcohol`)
+
+# Finds the levels of the column
+levels(c$`Drug or Alcohol`)
+
+c %>%
+  filter( (`Drug or Alcohol` == "None Indicated") | (`Drug or Alcohol` == "Refused")) %>%
+  select(`Drug or Alcohol`)
+
+# Creates new column that combines all the levels of substance abuse
+c <- c %>%
+  mutate(Drug_Usage = 
+           (`Drug or Alcohol` != "None Indicated") &
+           (`Drug or Alcohol` != "Refused"))
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
+
+
+
