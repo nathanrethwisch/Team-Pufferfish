@@ -16,7 +16,7 @@ Zack:
 
 I will be exploring the relationship between accidents as they are related to alcohol or substance use and time of week. I want to see if substance related accidents cause more property damage and/or injuries and if substance related accidents are more likely to occur at night or on the weekends. I hypothesize that alcohol based incidents will results in more damage than normal accidents, and that alcohol and other substance based accidents will happen more often at night and on the weekends.
 
--We have not heard from Calvin
+
 
 ```{r}
 library(tidyverse)
