@@ -454,21 +454,21 @@ df%>%
 
 ```{r}
 df%>%
-  group_by(Daylight, Day, Year)%>%
+  group_by(Daylight, `Date of Crash`)%>%
   summarise(n = n())%>%
   ggplot(aes(x = Daylight, y = n)) + geom_point()
 ```
 
 ```{r}
 df%>%
-  group_by(Daylight)%>%
+  group_by(Daylight, `Date of Crash`)%>%
   summarise(n = n())%>%
   ggplot(aes(x = Daylight, y = n)) +geom_smooth(method = "gam", formula = y ~ poly(x, 25)) + geom_line()
 ```
 
 ```{r}
 df%>%
-  group_by(Daylight)%>%
+  group_by(Daylight, `Date of Crash`)%>%
   summarise(n = n())%>%
   ggplot(aes(x = Daylight, y = n)) +geom_smooth(method = "gam", formula = y ~ poly(x, 25))
 ```
