@@ -367,7 +367,7 @@ df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 df%>%
   group_by(Month, sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)
+  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -375,7 +375,7 @@ df%>%
 df%>%
   group_by(Month, sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)
+  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)
 ```
 
 We do have some skewed left graphs - meaning crashes are more likely to be close to sunset
@@ -385,7 +385,7 @@ We do have some skewed left graphs - meaning crashes are more likely to be close
 df%>%
   group_by(sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -393,7 +393,7 @@ df%>%
 df%>%
   group_by(sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_point()
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_point()+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -401,7 +401,7 @@ df%>%
 df%>%
   group_by(sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -409,7 +409,7 @@ df%>%
 df%>%
   group_by(sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -417,7 +417,7 @@ df%>%
 df%>%
   group_by(sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -426,7 +426,7 @@ df%>%
   group_by(sunsetDiff, `Travel Direction`)%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -435,7 +435,7 @@ df%>%
   group_by(sunriseDiff, `Travel Direction`)%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)
+  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -443,5 +443,5 @@ df%>%
 df%>%
   group_by(`Crash Severity`, sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)+geom_vline(xintercept = 0)
 ```
