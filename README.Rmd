@@ -89,7 +89,7 @@ crashes%>%
 ```{r}
 #The count of roadway contributions by injury severity
 crashes%>%
-  ggplot(aes(x = `Roadway Contribution`)) +geom_bar() + facet_wrap(~`Crash Severity`)+coord_flip()
+  ggplot(aes(x = `Roadway Contribution`)) +geom_bar() + facet_wrap(~`Crash Severity`)+coord_flip() + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -132,7 +132,7 @@ Cause_crashes%>%filter(n > 100)
 #Barplot of fatal crashes by light condition
 crashes%>%
   filter(`Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = `Light Conditions`)) +geom_bar() + coord_flip()
+  ggplot(aes(x = `Light Conditions`)) +geom_bar() + coord_flip()+ylab("Number of Crashes")
 ```
 
 ```{r fig.height = 10, fig.width = 10}
@@ -140,14 +140,14 @@ crashes%>%
 crashes%>%
   group_by(Month)%>%
   filter(`Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month) + coord_flip()
+  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month) + coord_flip() + ylab("Number of Crashes")
 ```
 
 ```{r, fig.height = 15, fig.width = 15}
 #All types of crashes by month
 crashes%>%
   group_by(Month)%>%
-  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month)
+  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month)+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -195,7 +195,7 @@ crashes<- crashes %>% mutate(TimesOfDay =
 #There seems to be little difference, but sunset and sunrise times are changing, so it is hard to know when sunset and sunrise actually is happening
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip()
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + ylab("Number of crashes")
 
 
 ```
@@ -204,7 +204,7 @@ crashes%>%
 #Fatal crashes per month by time of day
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'), `Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month)
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month) + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -227,7 +227,7 @@ crashes%>%
 #All crashes by month and time of day and direction of travel - this shows a smoother distribution
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month)
+  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month) + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -235,7 +235,7 @@ crashes%>%
 crashes%>%
   group_by(Hour, Month)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `Hour`, y =n)) + geom_line() + facet_wrap(~Month)
+  ggplot(aes(x = `Hour`, y =n)) + geom_line() + facet_wrap(~Month) + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -344,7 +344,7 @@ sum(is.na(sun$`Daylight`))
 crashes%>%
   group_by(`Time of Crash`)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line()
+  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line() + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -373,7 +373,7 @@ df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 df%>%
   group_by(Month, sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -381,7 +381,7 @@ df%>%
 df%>%
   group_by(Month, sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
 ```
 
 We do have some skewed left graphs - meaning crashes are more likely to be close to sunset
@@ -391,23 +391,23 @@ We do have some skewed left graphs - meaning crashes are more likely to be close
 df%>%
   group_by(sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
 ```{r}
 #Shows the same in a scatterplot, just in case there are outliers
 df%>%
   group_by(sunsetDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_point()+geom_vline(xintercept = 0)
+  summarise("Number of Crashes" = n())%>%
+  ggplot(aes(x = sunsetDiff, y = `Number of Crashes`)) + geom_point()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
 ```{r}
 #A fitted line for the difference between sunset and crash time
 df%>%
   group_by(sunsetDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()+geom_vline(xintercept = 0)
+  summarise("Number of Crashes" = n())%>%
+  ggplot(aes(x = sunsetDiff, y = `Number of Crashes`)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")
 ```
 
 ```{r}
@@ -415,7 +415,7 @@ df%>%
 df%>%
   group_by(sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0) + xlab("Minutes from Sunrise")+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -423,7 +423,7 @@ df%>%
 df%>%
   group_by(sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunriseDiff, y = n))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -432,7 +432,7 @@ df%>%
   group_by(sunsetDiff, `Travel Direction`)%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)
+  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -441,7 +441,7 @@ df%>%
   group_by(sunriseDiff, `Travel Direction`)%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   summarise(n = n())%>%
-  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)
+  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -449,7 +449,7 @@ df%>%
 df%>%
   group_by(`Crash Severity`, sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)+geom_vline(xintercept = 0)
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line() + facet_grid(~`Crash Severity`)+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
 ```{r}
