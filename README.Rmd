@@ -454,9 +454,9 @@ df%>%
 
 ```{r}
 df%>%
-  group_by(Daylight)%>%
+  group_by(Daylight, Day, Year)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_line()
+  ggplot(aes(x = Daylight, y = n)) + geom_point()
 ```
 
 ```{r}
