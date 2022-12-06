@@ -10,7 +10,7 @@ output:
 
 ## Introduction
 
-According to the Iowa Department of Transportation, there are over 50,000 crashes per year. These crashes cause millions in property damage, and unfortunately, the loss of life, with over 300 people dying to vehicular crashes per year. It is important that we understand more about
+According to the Iowa Department of Transportation, there are over 50,000 crashes per year~1~. These crashes cause millions in property damage, and unfortunately, the loss of life, with over 300 people dying to vehicular crashes per year. It is important to gain a greater understanding of the causes of these crashes in order to better create prevention strategies and protect the drivers on the road. Furthermore, by informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the correlations between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
 
 ## The Data
 
@@ -515,6 +515,6 @@ c %>%
 
 ## Bibliography
 
-<https://delawaresafety.org/resources/Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf>
+1 <https://delawaresafety.org/resources/Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf>
 
-<https://iowadot.gov/mvd/stats/crashhistory.pdf>
+2 <https://iowadot.gov/mvd/stats/crashhistory.pdf>
