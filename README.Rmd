@@ -78,7 +78,7 @@ colSums(is.na(crashes))
 
 ```
 
-Next, using the lubridate package in R, the 'Date of Crash' column was converted into three new columns  - Day, Month, and Year.
+Next, using the lubridate package in R, the 'Date of Crash' column was converted into three new columns - Day, Month, and Year.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
 crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
@@ -592,6 +592,6 @@ Another area we would be interested in looking further into is looking at alcoho
 
 ## Bibliography
 
-1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, https://iowadot.gov/mvd/stats/crashhistory.pdf.
+1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot.gov/mvd/stats/crashhistory.pdf>.
 
-2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* https://delawaresafety.org/resources/ Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
+2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
