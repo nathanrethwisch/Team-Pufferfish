@@ -367,33 +367,28 @@ This graph shows that there is less of a spike in the summer months (May-Septemb
 
 ### Daylight Analysis
 
-I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the average number of crashes based on the length of the day. It was important to use the average number of crashes because winter months will have days that are the same short length, while there are less times that overlap in the summer months.
+I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the number of crashes based on the length of the day.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight<-df%>%
-group_by(Daylight, `Date of Crash`)%>%
-  summarise(n = n()/length(unique(`Date of Crash`)))%>%
-  mutate(uniqueDate = length(unique(`Date of Crash`)))%>%
-  mutate(total = sum(n)/uniqueDate)
-
-dfDaylight <- dfDaylight[!duplicated(dfDaylight$total), ]
-
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total)) + geom_point() + ylab("Average Number of Crashes")
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
 ```
 
 There seems to be more variability in earlier months, but overall a downward trend. A line can be fitted using LOESS smoothing to better see the trend in the data.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total)) + geom_point() + ylab("Average Number of Crashes") + geom_smooth(span = 0.3)
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
 ```
 
 Looking at the line alone shows that there is very clearly a downward trend, meaning that there is a correlation to fewer daylight hours and more crashes.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total))+ geom_smooth(span= 0.3)+ylab("Number of Crashes")
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + ylab("Number of Crashes") + geom_smooth(span = 0.3) + ylim(0,5000)
 ```
 
 ### Conclusion:
