@@ -10,7 +10,7 @@ output:
 
 ## Introduction
 
-Every year,
+According to the Iowa Department of Transportation, there are over 50,000 crashes per year. These crashes cause millions in property damage, and unfortunately, the loss of life, with over 300 people dying to vehicular crashes per year. It is important that we understand more about
 
 ## The Data
 
@@ -21,14 +21,14 @@ library(tidyverse)
 #crashes <- read_csv("../Vehicle_Crashes_in_Iowa.csv")
 
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
-
 ```
 
 ```{r}
+crashes%>%tally()
+crashes%>%colnames()
+```
 
-dim(crashes)
-str(crashes)
-
+```{r}
 #NA values are only found in a few values?
 colSums(is.na(crashes))
 
@@ -71,51 +71,9 @@ crashes <- crashes%>%
 ```
 
 ```{r}
-#Looking at the different crash severities
-crashes%>%
-  group_by(`Crash Severity`)%>%
-  summarise(n = n())
-```
-
-```{r}
-#Roadway contribution to fatal car accidents
-crashes%>%
-  filter(`Crash Severity` == "Fatal")%>%
-  group_by(`Roadway Contribution`)%>%
-  summarise(n = n())
-```
-
-```{r}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
-```
-
-```{r}
-#The top cause of fatal crashes
-crashes3<- crashes%>%
-  filter(`Crash Severity` == "Fatal")%>%
-  group_by(`Major Cause`)%>%
-  summarise(n = n())
-
-crashes3[which.max(crashes3$n),]
-```
-
-```{r}
-#Looking at the top environmental and surface conditions for fatal accidents
-Cause_crashes<- crashes%>%
-  filter(`Crash Severity` == "Fatal")%>%
-  group_by(`Environmental Conditions`, `Light Conditions`, `Surface Conditions`, `Weather Conditions`)%>%
-  summarise(n = n())
-
-Cause_crashes%>%filter(n > 100)
-```
-
-```{r}
-#Barplot of fatal crashes by light condition
-crashes%>%
-  filter(`Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = `Light Conditions`)) +geom_bar() + coord_flip()+ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -144,36 +102,6 @@ crashes%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + ylab("Number of crashes")
 
 
-```
-
-```{r}
-#Fatal crashes per month by time of day
-crashes%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'), `Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month) + ylab("Number of Crashes")
-```
-
-```{r}
-#Looking at above data, there seems to be a lot of fatal crashse travelling easbound in August, but there are no major crash events to cause this. Perhaps people are travelling east on the way home from vacation?
-crashes%>%
-  filter(`Month` == "08", `Crash Severity` == "Fatal", `Travel Direction` == "Eastbound (EB)")%>%
-  group_by(Day)%>%
-  summarise(n = n())
-```
-
-```{r}
-#There are also a lot of crashes travelling westbound in June, maybe people are going west for the summer? This could also be thrown off due to the small amount of fatal crashes
-crashes%>%
-  filter(`Month` == "06", `Crash Severity` == "Fatal", `Travel Direction` == "Westbound (WB)")%>%
-  group_by(Day)%>%
-  summarise(n = n())
-```
-
-```{r}
-#All crashes by month and time of day and direction of travel - this shows a smoother distribution
-crashes%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month) + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -446,8 +374,6 @@ c <- c %>%
 (true_rows <- nrow(c) - false_rows)
 ```
 
-
-
 ```{r}
 # Total cost of crashes without substance abuse
 (false_total_cost <- c %>%
@@ -470,7 +396,6 @@ false_total_cost / false_rows
 true_total_cost / true_rows
 
 ```
-
 
 ```{r}
 # Total number of injuries with and without substance abuse
@@ -588,3 +513,8 @@ c %>%
   ggplot(aes(x=Day)) + geom_bar()
 ```
 
+## Bibliography
+
+<https://delawaresafety.org/resources/Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf>
+
+<https://iowadot.gov/mvd/stats/crashhistory.pdf>
