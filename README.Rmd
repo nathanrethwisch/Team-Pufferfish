@@ -4,25 +4,23 @@ output:
   html_document: default
 ---
 
-I love pufferfish
+# Analysis of Vehicular Crashes in Iowa
 
-The goal of our project is to find what variables are most prominent when causing crashes that are fatal, have significant crash severity, or cause the most property damage. The variables we are looking at right now include roadway type, roadway surface, environmental/weather conditions, and light conditions. Eventually, we would like to create a model to predict what conditions are most likely to cause serious injuries.
+##### Nathan Rethwisch and Zack Swayne
 
-Nathan:
+## Introduction
 
-In addition to this, I will be exploring the relationship accidents and time of day. I want to see if certain things like driving into the sun or driving at night result in a significant increase in accidents. I hypothesize that crashes will increase when going eastbound during the morning and decrease in the evening. For westbound drivers, the opposite should be true- crashes will increase in the evening/afternoon and decrease in the morning.
+Every year,
 
-Zack:
-
-I will be exploring the relationship between accidents as they are related to alcohol or substance use and time of week. I want to see if substance related accidents cause more property damage and/or injuries and if substance related accidents are more likely to occur at night or on the weekends. I hypothesize that alcohol based incidents will results in more damage than normal accidents, and that alcohol and other substance based accidents will happen more often at night and on the weekends.
+## The Data
 
 ```{r}
 library(tidyverse)
 
 #Use this if the below code doesn't work - file must be stored on your device.
-crashes <- read_csv("../Vehicle_Crashes_in_Iowa.csv")
-#View(crashes)
-#crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+#crashes <- read_csv("../Vehicle_Crashes_in_Iowa.csv")
+
+crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 
 ```
 
@@ -34,7 +32,7 @@ str(crashes)
 #NA values are only found in a few values?
 colSums(is.na(crashes))
 
-#This is strange because it appears that Weather Conditions has NA values
+#This is strange because it appears that Weather Conditions has NA values, but they are not appearign
 sum(is.na(crashes$`Weather Conditions`))
 
 #Making blank and N/A value in NA
@@ -42,6 +40,8 @@ crashes$`City Name`[crashes$`City Name` == ""] <- NA
 crashes$`County Name`[crashes$`County Name` == ""] <- NA
 crashes$`Route with System`[crashes$`Route with System` == ""] <- NA
 crashes[crashes=="N/A"]<-NA
+
+#Total Number of Occupants is sometimes listed as 777 which is illogical
 crashes$`Total Number of Occupants`[crashes$`Total Number of Occupants` == 777] <- NA
 
 #Making the case number an integer
@@ -68,7 +68,6 @@ crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
 crashes <- crashes%>%
   separate(col = `Date of Crash`, into = c("Year", "Month", "Day"), remove =
              FALSE, sep = "-")
-#View(crashes)
 ```
 
 ```{r}
@@ -87,25 +86,9 @@ crashes%>%
 ```
 
 ```{r}
-#The count of roadway contributions by injury severity
-crashes%>%
-  ggplot(aes(x = `Roadway Contribution`)) +geom_bar() + facet_wrap(~`Crash Severity`)+coord_flip() + ylab("Number of Crashes")
-```
-
-```{r}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
-```
-
-```{r}
-#Crash severity grouped by roadway type
-crashes2<- crashes%>%
-  group_by(`Roadway Type`, `Crash Severity`)%>%
-  summarise(n = n())
-
-crashes2[which.max(crashes2$n),]
-
 ```
 
 ```{r}
@@ -135,44 +118,6 @@ crashes%>%
   ggplot(aes(x = `Light Conditions`)) +geom_bar() + coord_flip()+ylab("Number of Crashes")
 ```
 
-```{r fig.height = 10, fig.width = 10}
-#Fatal Crashes by Day
-crashes%>%
-  group_by(Month)%>%
-  filter(`Crash Severity` == "Fatal")%>%
-  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month) + coord_flip() + ylab("Number of Crashes")
-```
-
-```{r, fig.height = 15, fig.width = 15}
-#All types of crashes by month
-crashes%>%
-  group_by(Month)%>%
-  ggplot(aes(x = Day, fill = `Crash Severity`)) +geom_bar() + facet_wrap(~Month)+ylab("Number of Crashes")
-```
-
-```{r}
-#Number of injuries for crashes with under $100,000 in property damage
-crashes%>%
-  filter(`Amount of Property Damage`<100000)%>%
-  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Injuries`)) + geom_point()
-  
-  
-```
-
-```{r}
-#Amount of minior injuries for crashes with under $100,000 in property damage
-crashes%>%
-  filter(`Amount of Property Damage`<100000)%>%
-  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Minor Injuries`)) + geom_point()
-```
-
-```{r}
-#
-crashes%>%
-  filter(`Amount of Property Damage`<100000)%>%
-  ggplot(aes(x = `Amount of Property Damage`, y = `Number of Major Injuries`)) + geom_point()
-```
-
 ```{r}
 #Crashes by direction
 crashes$Hour<- gsub("Hour ", "\\1", crashes$Hour)
@@ -185,14 +130,15 @@ crashes$Hour<- parse_integer(crashes$Hour)
 #12pm-5pm is the afternoon
 #6pm-9pm is the evening
 crashes<- crashes %>% mutate(TimesOfDay =
-                     case_when((Hour >20) | (Hour < 5) ~"Night",
-                               (Hour >=5) & (Hour <=11) ~"Morning",
+                     case_when((Hour >=21) | (Hour < 5) ~"Night",
+                               (Hour >=5) & (Hour <12) ~"Morning",
                                (Hour >=12) & (Hour <17) ~"Afternoon",
                                (Hour >=17) & (Hour <21) ~"Evening")
 )
 
 #Plotting crashes by time of day and travel direction
 #There seems to be little difference, but sunset and sunrise times are changing, so it is hard to know when sunset and sunrise actually is happening
+crashes$TimesOfDay <- factor(crashes$TimesOfDay, levels = c("Night", "Evening", "Afternoon", "Morning"))
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + ylab("Number of crashes")
@@ -228,14 +174,6 @@ crashes%>%
 crashes%>%
   filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
   ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + facet_wrap(~Month) + ylab("Number of Crashes")
-```
-
-```{r}
-#Looking at a scatterplot of crashes by hour per month. There seem to be some pretty high peeks in the aftenoons of November and December
-crashes%>%
-  group_by(Hour, Month)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `Hour`, y =n)) + geom_line() + facet_wrap(~Month) + ylab("Number of Crashes")
 ```
 
 ```{r}
@@ -340,14 +278,6 @@ sum(is.na(sun$`Daylight`))
 ```
 
 ```{r}
-#A line chart that loooks at crashes by time of crash
-crashes%>%
-  group_by(`Time of Crash`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `Time of Crash`, y = n)) + geom_line() + ylab("Number of Crashes")
-```
-
-```{r}
 crashes$Month<- gsub("Month ", "\\1", crashes$Month)
 crashes$Month<- parse_integer(crashes$Month)
 
@@ -369,6 +299,9 @@ df$sunsetDiff = difftime(df$`Time of Crash`, df$`Sunset Time`, unit = 'mins')
 df$sunriseDiff = difftime(df$`Time of Crash`, df$`Sunrise Time`, unit = 'mins')
 df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 
+```
+
+```{r}
 #Looking at the difference between sunset and time of the crash by month
 df%>%
   group_by(Month, sunsetDiff)%>%
@@ -407,7 +340,15 @@ df%>%
 df%>%
   group_by(sunsetDiff)%>%
   summarise("Number of Crashes" = n())%>%
-  ggplot(aes(x = sunsetDiff, y = `Number of Crashes`)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line()+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")
+  ggplot(aes(x = sunsetDiff, y = `Number of Crashes`)) + geom_smooth(method = "gam", formula = y ~ poly(x, 27)) + geom_line() +geom_vline(xintercept = 0) + xlab("Minutes from Sunset")
+```
+
+```{r}
+#A graph of all crashes by the difference between crash time and sunrise, with a fitted line
+df%>%
+  group_by(sunriseDiff)%>%
+  summarise(n = n())%>%
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + ylab("Number of Crashes") + xlab("Minutes From Sunrise") + geom_vline(xintercept = 0)
 ```
 
 ```{r}
@@ -439,13 +380,7 @@ df%>%
 #Looking at sunrise vs. crash time going different directions
 df%>%
   group_by(sunriseDiff, `Travel Direction`)%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
-```
-
-```{r}
-#Looking at different crash severities with sunset vs. crash time
+   at different crash severities with sunset vs. crash time
 df%>%
   group_by(`Crash Severity`, sunsetDiff)%>%
   summarise(n = n())%>%
@@ -462,10 +397,16 @@ group_by(Daylight, `Date of Crash`)%>%
 dfDaylight <- dfDaylight[!duplicated(dfDaylight$total), ]
 
 dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total)) + geom_line()
+  ggplot(aes(x = Daylight, y = total)) + geom_line() + ylab("Average Number of Crashes")
 ```
 
 ```{r}
 dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))+ylab("Number of Crashes")
+  ggplot(aes(x = Daylight, y = total)) + geom_line() + ylab("Average Number of Crashes") + geom_smooth(span = 0.3)
+
+```
+
+```{r}
+dfDaylight%>%
+  ggplot(aes(x = Daylight, y = total))+ geom_smooth(span= 0.3)+ylab("Number of Crashes")
 ```
