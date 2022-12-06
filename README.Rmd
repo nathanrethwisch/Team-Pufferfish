@@ -453,22 +453,19 @@ df%>%
 ```
 
 ```{r}
-df%>%
-  group_by(Daylight, `Date of Crash`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point()
+dfDaylight<-df%>%
+group_by(Daylight, `Date of Crash`)%>%
+  summarise(n = n()/length(unique(`Date of Crash`)))%>%
+  mutate(uniqueDate = length(unique(`Date of Crash`)))%>%
+  mutate(total = sum(n)/uniqueDate)
+
+dfDaylight <- dfDaylight[!duplicated(dfDaylight$total), ]
+
+dfDaylight%>%
+  ggplot(aes(x = Daylight, y = total)) + geom_line()
 ```
 
 ```{r}
-df%>%
-  group_by(Daylight, `Date of Crash`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) +geom_smooth(method = "gam", formula = y ~ poly(x, 25)) + geom_line()
-```
-
-```{r}
-df%>%
-  group_by(Daylight, `Date of Crash`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) +geom_smooth(method = "gam", formula = y ~ poly(x, 25))
+dfDaylight%>%
+  ggplot(aes(x = Daylight, y = total))+ geom_smooth(method = "gam", formula = y ~ poly(x, 25))+ylab("Number of Crashes")
 ```
