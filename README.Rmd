@@ -410,3 +410,181 @@ dfDaylight%>%
 dfDaylight%>%
   ggplot(aes(x = Daylight, y = total))+ geom_smooth(span= 0.3)+ylab("Number of Crashes")
 ```
+
+```{r}
+
+# Creates new data set to do modifications on
+c <- crashes
+
+# Changes the drug or alcohol column to a factor so that all the levels can be
+# found
+c$`Drug or Alcohol` <- as.factor(c$`Drug or Alcohol`)
+
+# Finds the levels of the column
+levels(c$`Drug or Alcohol`)
+
+c %>%
+  filter( (`Drug or Alcohol` == "None Indicated") | (`Drug or Alcohol` == "Refused")) %>%
+  select(`Drug or Alcohol`)
+
+# Creates new column that combines all the levels of substance abuse
+c <- c %>%
+  mutate(Drug_Usage = 
+           (`Drug or Alcohol` != "None Indicated") &
+           (`Drug or Alcohol` != "Refused"))
+
+```
+
+```{r}
+# Total number of crashes without substance abuse
+(false_rows <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Amount of Property Damage`) %>%
+  nrow())
+
+# Total amount of crashes with substance abuse
+(true_rows <- nrow(c) - false_rows)
+```
+
+
+
+```{r}
+# Total cost of crashes without substance abuse
+(false_total_cost <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Amount of Property Damage`) %>%
+  sum(na.rm=TRUE))
+
+# Total cost of crashes with substance abuse
+(true_total_cost <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Amount of Property Damage`) %>%
+  sum(na.rm=TRUE))
+
+sum(c$`Amount of Property Damage`, na.rm = TRUE) / nrow(c)
+  
+# Average property damage of crash without substance abuse
+false_total_cost / false_rows
+
+# Average property damage of crash with substance abuse
+true_total_cost / true_rows
+
+```
+
+
+```{r}
+# Total number of injuries with and without substance abuse
+(false_total_inj <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Number of Injuries`) %>%
+  sum(na.rm=TRUE))
+
+(true_total_inj <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Number of Injuries`) %>%
+  sum(na.rm=TRUE))
+
+# Average injuries per accident without substance abuse
+false_total_inj / false_rows
+
+# Average injuries per accident with substance abuse
+true_total_inj / true_rows
+
+```
+
+```{r}
+# Total number of fatalities with and without substance abuse
+(false_total_fatal <- c %>%
+  filter(Drug_Usage == FALSE) %>%
+  select(`Number of Fatalities`) %>%
+  sum(na.rm=TRUE))
+
+(true_total_fatal <- c %>%
+  filter(Drug_Usage == TRUE) %>%
+  select(`Number of Fatalities`) %>%
+  sum(na.rm=TRUE))
+
+# Average fatalities per accident without substance abuse
+false_total_fatal / false_rows
+
+# Average fatalities per accident with substance abuse
+true_total_fatal / true_rows
+
+```
+
+```{r}
+c <- c %>%
+  mutate(Hour = parse_number(Hour))
+
+# Plot of all crashes by the hour
+c %>%
+  ggplot(aes(x=Hour)) + geom_bar()
+# Most crashes happen during "rush hour" from 4 to 6 P.M.
+
+# Plot of all crashes with sustance abuse by the hour
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Hour)) + geom_bar()
+# Most crashes with substances involved happen from 11 P.M. to 3 A.M.
+
+c_night <- c %>%
+  filter(Hour >= 22 | Hour <= 3)
+
+(total_night <- nrow(c_night))
+
+(true_total_night <- c_night %>%
+  filter(Drug_Usage == TRUE) %>%
+  nrow())
+
+# Crashes with substances are 4% of all crashes
+true_rows / nrow(c)
+
+# Crashes with substances are 14% of all crashes from 10 P.M. to 3 A.M.
+true_total_night / total_night
+
+```
+
+```{r}
+# Plot of all crashes by day of the week
+c %>%
+  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
+# Crashes occur pretty much uniformly throughout the week
+#
+# Slight uptick on Friday, people driving home more recklessly to get
+# home faster?
+
+# Plot of all crashes with substance abuse by day of the week
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
+# Majority of these crashes occur on the weekends, Saturday and Sunday are
+# likely higher than Friday because they happen early in the "morning" after
+# Friday and Saturday nights
+
+```
+
+```{r}
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Month)) + geom_bar()
+
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
+
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Year)
+
+c %>%
+  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
+
+c %>%
+  filter(Month == 12) %>%
+  ggplot(aes(x=Day)) + geom_bar()
+
+c %>%
+  filter(Month == "01") %>%
+  ggplot(aes(x=Day)) + geom_bar()
+```
+
