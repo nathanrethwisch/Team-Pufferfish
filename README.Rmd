@@ -401,7 +401,7 @@ A number of conclusions can be drawn from this data analysis.
 
 3.  There are more crashes near sunrise during winter months than summer months, perhaps because drivers do not adequately de-ice their vehicle before travelling
 
-4.  There is a correlation between a shorter day and more crashes, on average. This could be related to colder weather conditions.
+4.  There is a correlation between a shorter day and more crashes. This could be related to colder weather conditions.
 
 ## Alcohol Analysis
 
