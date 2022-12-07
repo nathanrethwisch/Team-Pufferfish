@@ -78,7 +78,7 @@ colSums(is.na(crashes))
 
 ```
 
-Next, using the lubridate package in R, the 'Date of Crash' column was converted into three new columns  - Day, Month, and Year.
+Next, using the lubridate package in R, the 'Date of Crash' column was converted into three new columns - Day, Month, and Year.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
 crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
@@ -367,33 +367,28 @@ This graph shows that there is less of a spike in the summer months (May-Septemb
 
 ### Daylight Analysis
 
-I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the average number of crashes based on the length of the day. It was important to use the average number of crashes because winter months will have days that are the same short length, while there are less times that overlap in the summer months.
+I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the number of crashes based on the length of the day.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight<-df%>%
-group_by(Daylight, `Date of Crash`)%>%
-  summarise(n = n()/length(unique(`Date of Crash`)))%>%
-  mutate(uniqueDate = length(unique(`Date of Crash`)))%>%
-  mutate(total = sum(n)/uniqueDate)
-
-dfDaylight <- dfDaylight[!duplicated(dfDaylight$total), ]
-
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total)) + geom_point() + ylab("Average Number of Crashes")
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
 ```
 
 There seems to be more variability in earlier months, but overall a downward trend. A line can be fitted using LOESS smoothing to better see the trend in the data.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total)) + geom_point() + ylab("Average Number of Crashes") + geom_smooth(span = 0.3)
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
 ```
 
 Looking at the line alone shows that there is very clearly a downward trend, meaning that there is a correlation to fewer daylight hours and more crashes.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dfDaylight%>%
-  ggplot(aes(x = Daylight, y = total))+ geom_smooth(span= 0.3)+ylab("Number of Crashes")
+df%>%group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + ylab("Number of Crashes") + geom_smooth(span = 0.3) + ylim(0,5000)
 ```
 
 ### Conclusion:
@@ -406,7 +401,7 @@ A number of conclusions can be drawn from this data analysis.
 
 3.  There are more crashes near sunrise during winter months than summer months, perhaps because drivers do not adequately de-ice their vehicle before travelling
 
-4.  There is a correlation between a shorter day and more crashes, on average. This could be related to colder weather conditions.
+4.  There is a correlation between a shorter day and more crashes. This could be related to colder weather conditions.
 
 ## Alcohol Analysis
 
@@ -606,6 +601,6 @@ Another area we would be interested in looking further into is looking at alcoho
 
 ## Bibliography
 
-1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, https://iowadot.gov/mvd/stats/crashhistory.pdf.
+1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot.gov/mvd/stats/crashhistory.pdf>.
 
-2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* https://delawaresafety.org/resources/ Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
+2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
