@@ -407,7 +407,7 @@ A number of conclusions can be drawn from this data analysis.
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
-The main data set has a variable titled "Drug or Alcohol" with eight  different levels. However, only two of these levels signify that sustances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
+The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that sustances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
 
 ```{r}
 
@@ -446,7 +446,7 @@ In order to perform further calculations, I also created some helper variables c
 (true_rows <- nrow(c) - false_rows)
 ```
 
-After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost $3000 more on average.
+After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost \$3000 more on average.
 
 ```{r}
 # Total cost of crashes without substance abuse
@@ -587,11 +587,11 @@ c %>%
 
 ## Conclusions
 
-1. Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
+1.  Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
 
-2. Nighttime and Friday and Saturday nights are the times with the most drunk driving, so it may be wise to avoid the roads at those times.
+2.  Nighttime and Friday and Saturday nights are the times with the most drunk driving, so it may be wise to avoid the roads at those times.
 
-3. The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
+3.  The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
 
 ## Further Analysis
 
