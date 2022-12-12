@@ -5,11 +5,7 @@ output:
 
 # Analysis of Vehicular Crashes in Iowa
 
-##### Nathan Rethwisch and Zack Swayne
-
 ##### December 6, 2022
-
-##### DS 202
 
 ## Introduction
 
@@ -34,79 +30,19 @@ This data set comes from the Iowa Department of Transportation contains data for
 
 In total there are 728,442 observations in the data set and 37 variables, which included information on data and time of crash, location, number of injuries or fatalities, weather and road conditions, property damage, the number of passengers, and whether or not the driver was under the influence.
 
--   Date and Time
-
--   Location
-
--   Number of Injuries/Fatalities
-
--   Weather and Road Conditions
-
--   Amounts of Property Damage
-
--   Number and Sobriety of Passengers
-
 ## Sunrise/Sunset Analysis
 
-##### Nathan Rethwisch
-
-After cleaning the data, I decided to look into how time of the day affects when car crashes happen. I also wanted to look into how travel direction affects when crashes happen. My intuition tells me that more crashes will happen in the morning when travelling eastbound because the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly. Similarly, I predict that more crashes will happen in the evening when travelling westbound because drivers will be travelling into the setting sun. The following graph shows crashes per hour, separated by direction of travel:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-crashes$Hour<- gsub("Hour ", "\\1", crashes$Hour)
-crashes$Hour<- parse_integer(crashes$Hour)
-crashes%>%
-  filter(`Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  group_by(Hour, `Travel Direction`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = Hour, y =n), group = Hour) + geom_line() + facet_wrap(~`Travel Direction`)
-```
-
-It would appear that there is little correlation between crash time and direction of travel based on this graph, although there appears to be a spike during the approximate sunrise and sunset hours. I decided to also create a bar graph to compare direction of travel, separating times into four categories as follows:
-
--   Morning: 5:00am - 11:59am
-
--   Afternoon: 12:00pm - 4:49pm
-
--   Evening: 5:00pm - 8:59pm
-
--   Night: 8:00pm - 4:59pm
-
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-#Creating different times of day
-#9pm-4:59am is night
-#5am-11:59am is morning
-#12pm-4:49pm is the afternoon
-#5pm-8:49pm is the evening
-crashes<- crashes %>% mutate(TimesOfDay =
-                     case_when((Hour >=21) | (Hour < 5) ~"Night",
-                               (Hour >=5) & (Hour <12) ~"Morning",
-                               (Hour >=12) & (Hour <17) ~"Afternoon",
-                               (Hour >=17) & (Hour <21) ~"Evening")
-)
-```
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Plotting crashes by time of day and travel direction
-crashes$TimesOfDay <- factor(crashes$TimesOfDay, levels = c("Night", "Evening", "Afternoon", "Morning"))
-crashes%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + ylab("Number of crashes")
-```
-
-This also showed no noticeable difference in travel direction compared to number of crashes. However, I noticed that this graph definitely had some flaws. First off, the categories for times of day were completely arbitrary, and did not at all correlate to when it would be light or dark outside. Because there is less daylight in the winter and more in the summer, the times when it is light or dark outside will vary drastically. The previous line graph showed that there may be some more correlation between sunrise and sunset times, so with the encouragement of Dr. Hofmann, I decided to scrape sunrise and sunset times to use for comparison.
+After cleaning the data, our analysis focused on how time of the day when car crashes happen. We hypothesize that more crashes will happen in the morning and evening as the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly.
 
 ### Data Extraction
 
-I decided to scrape sunrise and sunset times for Ames in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, I limited these discrepancies to under three minutes for practically every data point. I also chose the year 2020 because it was the last leap year and would provide meaningful data for February 29.
+Because evening and morning times are variable throughout the year, one must look at when the sun is rising and setting. Because this data was not included in the original data set, the data was scraped from timeanddate.com. The data includes sunrise and sunset times for Ames, Iowa in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, these discrepancies to under three minutes. The year 2020 was chosen because it is the most recent leap year and would provide meaningful data for February 29.
 
 The table that was used for the data collection is as follows:
 
 ![](images/paste-D669372C.png)
 
-I extracted data from this table and created a function to extract the date, sunrise, sunset, and length of the day. This involved quite a bit of cleaning. First, I needed to rename all of the columns, as well as change some of the data types. I also had to deal with a note informing the user of a time change, which only appeared in the months of March and November. I also faced a problem with the labels in the graph forcing the first day to each month to be its column in the data frame. I fixed this by creating a separate data frame out of the first day and merging that with the rest of the data frame.
-
-Because each month was it's own url, I made a loop to extract the data for each month to create a full data frame with the date, sunrise, sunrise, and length of daylight for each day of the year.
+Using a function, the data was extracted for each month in 2020 and joined with the original crash data set.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 #Using rvest to extract sunrise and sunset data
@@ -205,8 +141,6 @@ sum(is.na(sun$`Sunset Time`))
 sum(is.na(sun$`Daylight`))
 ```
 
-I did some cleaning to ensure the variables were the same type, and then combined the crash data set with the sunrise and sunset data set by day and month.
-
 ```{r, echo = FALSE, message = FALSE, results = FALSE}
 crashes$Month<- gsub("Month ", "\\1", crashes$Month)
 crashes$Month<- parse_integer(crashes$Month)
@@ -222,8 +156,6 @@ sun$Date <- as.integer(sun$Date)
 #Joining the original data and scraped data by day and month
 df<- left_join(crashes, sun, by = c("Day" = "Date", "Month" = "Month"))
 ```
-
-Next, I created a variable to represent the difference between the time of the crash and the sunrise time. I made a similar variable comparing sunset time and time of the crash.
 
 ```{r, echo = FALSE, message = FALSE, results = FALSE}
 #Finding the difference between the sunset time and the time of the crash
@@ -245,28 +177,7 @@ df%>%
   ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + ylab("Number of Crashes") + xlab("Minutes From Sunrise") + geom_vline(xintercept = 0)
 ```
 
-Looking at the output, it appears that there is a small spike, starting right before the sun rises and continuing until a little after it rises. Using this, we can compare the minutes from sunrise based on travel direction:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at sunrise vs. crash time going different directions
-df%>%
-  group_by(sunriseDiff, `Travel Direction`)%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
-```
-
-It appears that there is still not much of a noticeable difference between the travel direction and car crashes relative to the sunrise time. With this in mind, we can also analyze crashes relative to sunrise time by month.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at the difference between sunrise and time of the crash by month
-df%>%
-  group_by(Month, sunriseDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
-```
-
-The general trend of a spike right after sunrise holds throughout most months, but seems to be weaker in the summer months (July-August) than the summer months. This potentially related to weather, as people may be more likely to get into crashes in the morning when their car's windshield is frosty or snowy than when it is not.
+This clearly appears that there is a small spike, starting right before the sun rises.
 
 There also seems to be a noticeable spike around 750 minutes after sunrise time. This likely corresponds to sunset time, so it is only logical to look at how sunset time affects car crashes. The below graph shows the minutes away from sunset, with a line denoting where the sun sets.
 
@@ -278,44 +189,13 @@ df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
-There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~2~, driving at dusk is extremely dangerous, as our eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This could potentially be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
-
-Similar to the sunrise time, sunset time can be compared based upon travel direction.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at sunset vs. crash time going different directions
-df%>%
-  group_by(sunsetDiff, `Travel Direction`)%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
-```
-
-This graph still shows little correlation between sunset time and travel direction. This is similar to the results produced when looking at sunrise, but it seems to go against common intuition. One would find it likely that crashes are more likely to happen when driving westbound at sunset than eastbound. The Delaware Safety Council~2~, says that the glare from the sun can also be dangerous when travelling with the sun behind the driver as reflections off of mirrors can be distracting and cause drivers to not see other cars. This could be a potential reason why there is no significant difference between crashes when driving into the sun or away from it.
-
-The following graph shows minutes from sunset by month:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at the difference between sunset and time of the crash by month
-df%>%
-  group_by(Month, sunsetDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")+ylab("Number of Crashes")
-```
-
-This graph shows that there is less of a spike in the summer months (May-September) due to sunset than the winter ones. This could be related to weather or the fact that in the winter months, sunset happens during rush hour while in summer months, sunset likely happens after rush hour.
+There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~2~, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
 ### Daylight Analysis
 
-I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the number of crashes based on the length of the day.
+One point of note is looking into how the length of the day affects car crashes. The following graph shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
-```
-
-There seems to be more variability in earlier months, but overall a downward trend. A line can be fitted using LOESS smoothing to better see the trend in the data.
+There seems to be more variability in earlier months, but overall a downward trend.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 df%>%group_by(Daylight)%>%
@@ -323,25 +203,11 @@ df%>%group_by(Daylight)%>%
   ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
 ```
 
-Looking at the line alone shows that there is very clearly a downward trend, meaning that there is a correlation to fewer daylight hours and more crashes.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + ylab("Number of Crashes") + geom_smooth(span = 0.3) + ylim(0,5000)
-```
+There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
 ### Conclusion:
 
-A number of conclusions can be drawn from this data analysis.
-
-1.  There is little to no correlation between travel direction during sunrise or sunset and crashes. This may be against common wisdom, but could be explained by glare affecting a driver regardless of travel direction.
-
-2.  There is a correlation between sunset or sunrise time and the number of crashes that happen. There appears to be a spike in crashes before sunrise and an even greater right after the sun goes down. This can possibly be explained by
-
-3.  There are more crashes near sunrise during winter months than summer months, perhaps because drivers do not adequately de-ice their vehicle before travelling
-
-4.  There is a correlation between a shorter day and more crashes. This could be related to colder weather conditions.
+A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these statistics.
 
 ## Alcohol Analysis
 
