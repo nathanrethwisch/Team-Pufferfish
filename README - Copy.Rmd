@@ -30,6 +30,48 @@ This data set comes from the Iowa Department of Transportation contains data for
 
 In total there are 728,442 observations in the data set and 37 variables, which included information on data and time of crash, location, number of injuries or fatalities, weather and road conditions, property damage, the number of passengers, and whether or not the driver was under the influence.
 
+```{r, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
+#Making blank and N/A value in NA
+crashes$`City Name`[crashes$`City Name` == ""] <- NA
+crashes$`County Name`[crashes$`County Name` == ""] <- NA
+crashes$`Route with System`[crashes$`Route with System` == ""] <- NA
+crashes[crashes=="N/A"]<-NA
+
+#Total Number of Occupants is sometimes listed as 777 which is illogical
+crashes$`Total Number of Occupants`[crashes$`Total Number of Occupants` == 777] <- NA
+
+
+#Checking NA sums after we made changes to the dataset
+colSums(is.na(crashes))
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
+crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
+
+#Creating a new columns that are separate for year, month, and day
+crashes <- crashes%>%
+  separate(col = `Date of Crash`, into = c("Year", "Month", "Day"), remove =
+             FALSE, sep = "-")
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
+#Getting the distinct latitude and longitude
+crashes<- crashes%>%
+  separate(col = Location, into = c(NA, "Latitude", "Longitude"), remove =
+             FALSE, sep = " ")
+
+crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
+```
+
+```{r, warning = FALSE, echo = FALSE, results = FALSE}
+#Map of all crashes in Iowa. This shows that the data comes from all over the state
+crashes%>%
+      ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
+```
+
+## Sunrise/Sunset Analysis
+
 ## Sunrise/Sunset Analysis
 
 After cleaning the data, our analysis focused on how time of the day when car crashes happen. We hypothesize that more crashes will happen in the morning and evening as the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly.
