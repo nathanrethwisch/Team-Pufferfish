@@ -70,13 +70,11 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-```{r, warning = FALSE, echo = FALSE, results = FALSE}
+```{r, warning = FALSE, echo = FALSE, results = FALSE, message = FALSE}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
 crashes%>%
       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
-
-## Sunrise/Sunset Analysis
 
 ## Sunrise/Sunset Analysis
 
@@ -439,7 +437,7 @@ c %>%
 # most amount of drunk crashes
 ```
 
-## Conclusions
+## Conclusion
 
 1.  Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
 
@@ -449,8 +447,8 @@ c %>%
 
 ## Bibliography
 
-1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, https://iowadot. gov/mvd/stats/crashhistory.pdf.
+1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot>. gov/mvd/stats/crashhistory.pdf.
 
-2 "Ames, Iowa, USA - sunrise, sunset, and daylength" *timeanddate*, https://www.timeanddate.com/ sun/\@4846834?month=12&year=2020.
+2 "Ames, Iowa, USA - sunrise, sunset, and daylength" *timeanddate*, <https://www.timeanddate.com/> sun/\@4846834?month=12&year=2020.
 
-3 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* https://delawaresafety.org/resources/ Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
+3 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
