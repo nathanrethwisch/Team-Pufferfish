@@ -70,10 +70,10 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-```{r, warning = FALSE, echo = FALSE, results = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, results = FALSE}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
-crashes%>%
-      ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
+# crashes%>%
+#       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
 
 ## Sunrise/Sunset Analysis
