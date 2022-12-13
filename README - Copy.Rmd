@@ -5,7 +5,11 @@ output:
 
 # Analysis of Vehicular Crashes in Iowa
 
+##### Nathan Rethwisch and Zack Swayne
+
 ##### December 6, 2022
+
+##### DS 202
 
 ## Introduction
 
@@ -29,6 +33,8 @@ crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/T
 This data set comes from the Iowa Department of Transportation contains data for every recorded vehicle crash since January 2009. It is updated monthly by the Iowa Department of Transportation,
 
 In total there are 728,442 observations in the data set and 37 variables, which included information on data and time of crash, location, number of injuries or fatalities, weather and road conditions, property damage, the number of passengers, and whether or not the driver was under the influence.
+
+Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 ```{r, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -78,7 +84,7 @@ After cleaning the data, our analysis focused on how time of the day when car cr
 
 ### Data Extraction
 
-Because evening and morning times are variable throughout the year, one must look at when the sun is rising and setting. Because this data was not included in the original data set, the data was scraped from timeanddate.com. The data includes sunrise and sunset times for Ames, Iowa in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, these discrepancies to under three minutes. The year 2020 was chosen because it is the most recent leap year and would provide meaningful data for February 29.
+Because evening and morning times are variable throughout the year, one must look at when the sun is rising and setting. Because this data was not included in the original data set, the data was scraped from timeanddate.com~2~. The data includes sunrise and sunset times for Ames, Iowa in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, these discrepancies to under three minutes. The year 2020 was chosen because it is the most recent leap year and would provide meaningful data for February 29.
 
 The table that was used for the data collection is as follows:
 
@@ -231,7 +237,7 @@ df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
-There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~2~, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
+There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~3~, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
 ### Daylight Analysis
 
@@ -249,7 +255,7 @@ There is very clearly a downward trend, showing that there is a correlation to f
 
 ### Conclusion:
 
-A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these statistics.
+A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
 
 ## Alcohol Analysis
 
@@ -441,14 +447,10 @@ c %>%
 
 3.  The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
 
-## Further Analysis
-
-In the future, a variety of analysis could be performed to improve understanding of car crashes in Iowa. For example, we would be interested in further looking into how rush hour traffic can affect car crashes, especially geographically. Furthermore, looking into temperature trends would also provide insightful analysis.
-
-Another area we would be interested in looking further into is looking at alcohol-related crashes by location. Looking into how alcohol affects the type of crash would also provide useful information.
-
 ## Bibliography
 
-1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot.gov/mvd/stats/crashhistory.pdf>.
+1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, https://iowadot. gov/mvd/stats/crashhistory.pdf.
 
-2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
+2 "Ames, Iowa, USA - sunrise, sunset, and daylength" *timeanddate*, https://www.timeanddate.com/ sun/\@4846834?month=12&year=2020.
+
+3 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* https://delawaresafety.org/resources/ Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
