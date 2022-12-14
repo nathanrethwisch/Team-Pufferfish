@@ -1,6 +1,6 @@
 ---
 output:
-  html_document: default
+  html_document
 ---
 
 # Analysis of Vehicular Crashes in Iowa
