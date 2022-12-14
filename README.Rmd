@@ -32,35 +32,9 @@ crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/T
 
 This data set comes from the Iowa Department of Transportation contains data for every recorded vehicle crash since January 2009. It is updated monthly by the Iowa Department of Transportation,
 
-In total there are 728,442 observations in the data set and 37 columns. The columns include information on:
+In total there are 728,442 observations in the data set and 37 variables, which included information on data and time of crash, location, number of injuries or fatalities, weather and road conditions, property damage, the number of passengers, and whether or not the driver was under the influence.
 
--   Date and Time
-
--   Location
-
--   Number of Injuries/Fatalities
-
--   Weather and Road Conditions
-
--   Amounts of Property Damage
-
--   Number and Sobriety of Passengers
-
-## Data Cleaning
-
-When looking at the data set, it became apparent that there was some data cleaning that needed to be done. The following output shows the number of NA values that appeared for each variable:
-
-```{r}
-colSums(is.na(crashes))
-```
-
-Although there are many NA values in the data set, there were some that did not show up when calling the above function. For example, when looking at the data for Weather Conditions, it appeared that there were NA values, but the below function did not agree:
-
-```{r}
-sum(is.na(crashes$`Weather Conditions`))
-```
-
-It turns out, that a lot of NA values were coded as the character "N/A." We converted those values to NA. In addition to this, some of the columns included blank values, so they were also converted to NA. Finally, under the 'Total Number of Occupants' column, there were multiple values listed at 777. Because it is illogical to have 777 passengers in a vehicle, we assumed that this was a coding scheme for when the number of passengers was unknown and also decided to convert those to NA.
+Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 ```{r, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -78,8 +52,6 @@ colSums(is.na(crashes))
 
 ```
 
-Next, using the lubridate package in R, the 'Date of Crash' column was converted into three new columns - Day, Month, and Year.
-
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
 crashes$`Date of Crash` <- lubridate::mdy(crashes$`Date of Crash`)
 
@@ -88,8 +60,6 @@ crashes <- crashes%>%
   separate(col = `Date of Crash`, into = c("Year", "Month", "Day"), remove =
              FALSE, sep = "-")
 ```
-
-In addition to this, we cleaned and separated the Position data into longitude and latitude. The resulting longitude and latitude was then used to map every car crash in Iowa which is shown below:
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = FALSE}
 #Getting the distinct latitude and longitude
@@ -100,73 +70,25 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-```{r, warning = FALSE, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, results = FALSE}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
-crashes%>%
-      ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
+# crashes%>%
+#       ggplot(aes(x = Latitude, y = Longitude)) + geom_point()
 ```
 
 ## Sunrise/Sunset Analysis
 
-##### Nathan Rethwisch
-
-After cleaning the data, I decided to look into how time of the day affects when car crashes happen. I also wanted to look into how travel direction affects when crashes happen. My intuition tells me that more crashes will happen in the morning when travelling eastbound because the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly. Similarly, I predict that more crashes will happen in the evening when travelling westbound because drivers will be travelling into the setting sun. The following graph shows crashes per hour, separated by direction of travel:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-crashes$Hour<- gsub("Hour ", "\\1", crashes$Hour)
-crashes$Hour<- parse_integer(crashes$Hour)
-crashes%>%
-  filter(`Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  group_by(Hour, `Travel Direction`)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = Hour, y =n), group = Hour) + geom_line() + facet_wrap(~`Travel Direction`)
-```
-
-It would appear that there is little correlation between crash time and direction of travel based on this graph, although there appears to be a spike during the approximate sunrise and sunset hours. I decided to also create a bar graph to compare direction of travel, separating times into four categories as follows:
-
--   Morning: 5:00am - 11:59am
-
--   Afternoon: 12:00pm - 4:49pm
-
--   Evening: 5:00pm - 8:59pm
-
--   Night: 8:00pm - 4:59pm
-
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-#Creating different times of day
-#9pm-4:59am is night
-#5am-11:59am is morning
-#12pm-4:49pm is the afternoon
-#5pm-8:49pm is the evening
-crashes<- crashes %>% mutate(TimesOfDay =
-                     case_when((Hour >=21) | (Hour < 5) ~"Night",
-                               (Hour >=5) & (Hour <12) ~"Morning",
-                               (Hour >=12) & (Hour <17) ~"Afternoon",
-                               (Hour >=17) & (Hour <21) ~"Evening")
-)
-```
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Plotting crashes by time of day and travel direction
-crashes$TimesOfDay <- factor(crashes$TimesOfDay, levels = c("Night", "Evening", "Afternoon", "Morning"))
-crashes%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  ggplot(aes(x = `Travel Direction`, fill = `TimesOfDay`)) + geom_bar() + coord_flip() + ylab("Number of crashes")
-```
-
-This also showed no noticeable difference in travel direction compared to number of crashes. However, I noticed that this graph definitely had some flaws. First off, the categories for times of day were completely arbitrary, and did not at all correlate to when it would be light or dark outside. Because there is less daylight in the winter and more in the summer, the times when it is light or dark outside will vary drastically. The previous line graph showed that there may be some more correlation between sunrise and sunset times, so with the encouragement of Dr. Hofmann, I decided to scrape sunrise and sunset times to use for comparison.
+After cleaning the data, our analysis focused on how time of the day when car crashes happen. We hypothesize that more crashes will happen in the morning and evening as the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly.
 
 ### Data Extraction
 
-I decided to scrape sunrise and sunset times for Ames in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, I limited these discrepancies to under three minutes for practically every data point. I also chose the year 2020 because it was the last leap year and would provide meaningful data for February 29.
+Because evening and morning times are variable throughout the year, one must look at when the sun is rising and setting. Because this data was not included in the original data set, the data was scraped from timeanddate.com~2~. The data includes sunrise and sunset times for Ames, Iowa in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, these discrepancies to under three minutes. The year 2020 was chosen because it is the most recent leap year and would provide meaningful data for February 29.
 
 The table that was used for the data collection is as follows:
 
 ![](images/paste-D669372C.png)
 
-I extracted data from this table and created a function to extract the date, sunrise, sunset, and length of the day. This involved quite a bit of cleaning. First, I needed to rename all of the columns, as well as change some of the data types. I also had to deal with a note informing the user of a time change, which only appeared in the months of March and November. I also faced a problem with the labels in the graph forcing the first day to each month to be its column in the data frame. I fixed this by creating a separate data frame out of the first day and merging that with the rest of the data frame.
-
-Because each month was it's own url, I made a loop to extract the data for each month to create a full data frame with the date, sunrise, sunrise, and length of daylight for each day of the year.
+Using a function, the data was extracted for each month in 2020 and joined with the original crash data set.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 #Using rvest to extract sunrise and sunset data
@@ -265,8 +187,6 @@ sum(is.na(sun$`Sunset Time`))
 sum(is.na(sun$`Daylight`))
 ```
 
-I did some cleaning to ensure the variables were the same type, and then combined the crash data set with the sunrise and sunset data set by day and month.
-
 ```{r, echo = FALSE, message = FALSE, results = FALSE}
 crashes$Month<- gsub("Month ", "\\1", crashes$Month)
 crashes$Month<- parse_integer(crashes$Month)
@@ -282,8 +202,6 @@ sun$Date <- as.integer(sun$Date)
 #Joining the original data and scraped data by day and month
 df<- left_join(crashes, sun, by = c("Day" = "Date", "Month" = "Month"))
 ```
-
-Next, I created a variable to represent the difference between the time of the crash and the sunrise time. I made a similar variable comparing sunset time and time of the crash.
 
 ```{r, echo = FALSE, message = FALSE, results = FALSE}
 #Finding the difference between the sunset time and the time of the crash
@@ -305,28 +223,7 @@ df%>%
   ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + ylab("Number of Crashes") + xlab("Minutes From Sunrise") + geom_vline(xintercept = 0)
 ```
 
-Looking at the output, it appears that there is a small spike, starting right before the sun rises and continuing until a little after it rises. Using this, we can compare the minutes from sunrise based on travel direction:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at sunrise vs. crash time going different directions
-df%>%
-  group_by(sunriseDiff, `Travel Direction`)%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `sunriseDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
-```
-
-It appears that there is still not much of a noticeable difference between the travel direction and car crashes relative to the sunrise time. With this in mind, we can also analyze crashes relative to sunrise time by month.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at the difference between sunrise and time of the crash by month
-df%>%
-  group_by(Month, sunriseDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunrise")+ylab("Number of Crashes")
-```
-
-The general trend of a spike right after sunrise holds throughout most months, but seems to be weaker in the summer months (July-August) than the summer months. This potentially related to weather, as people may be more likely to get into crashes in the morning when their car's windshield is frosty or snowy than when it is not.
+This clearly appears that there is a small spike, starting right before the sun rises.
 
 There also seems to be a noticeable spike around 750 minutes after sunrise time. This likely corresponds to sunset time, so it is only logical to look at how sunset time affects car crashes. The below graph shows the minutes away from sunset, with a line denoting where the sun sets.
 
@@ -338,44 +235,13 @@ df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
-There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~2~, driving at dusk is extremely dangerous, as our eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This could potentially be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
-
-Similar to the sunrise time, sunset time can be compared based upon travel direction.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at sunset vs. crash time going different directions
-df%>%
-  group_by(sunsetDiff, `Travel Direction`)%>%
-  filter(!is.na(`Travel Direction`), `Travel Direction` %in% c('Westbound (WB)', 'Eastbound (EB)'))%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = `sunsetDiff`, y = n)) + geom_line() + facet_wrap(~`Travel Direction`)+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
-```
-
-This graph still shows little correlation between sunset time and travel direction. This is similar to the results produced when looking at sunrise, but it seems to go against common intuition. One would find it likely that crashes are more likely to happen when driving westbound at sunset than eastbound. The Delaware Safety Council~2~, says that the glare from the sun can also be dangerous when travelling with the sun behind the driver as reflections off of mirrors can be distracting and cause drivers to not see other cars. This could be a potential reason why there is no significant difference between crashes when driving into the sun or away from it.
-
-The following graph shows minutes from sunset by month:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-#Looking at the difference between sunset and time of the crash by month
-df%>%
-  group_by(Month, sunsetDiff)%>%
-  summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y= n)) + geom_line() + facet_wrap(~Month)+geom_vline(xintercept = 0) + xlab("Minutes from Sunset")+ylab("Number of Crashes")
-```
-
-This graph shows that there is less of a spike in the summer months (May-September) due to sunset than the winter ones. This could be related to weather or the fact that in the winter months, sunset happens during rush hour while in summer months, sunset likely happens after rush hour.
+There appears to be a pretty drastic jump right after the sun sets. According to the Delaware Safety Council~3~, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
 ### Daylight Analysis
 
-I also decided to look into how the length of the day affects car crashes, to try to get further evidence that shorter, colder days are more likely to cause car accidents than longer ones. The following graph shows the number of crashes based on the length of the day.
+One point of note is looking into how the length of the day affects car crashes. The following graph shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
-```
-
-There seems to be more variability in earlier months, but overall a downward trend. A line can be fitted using LOESS smoothing to better see the trend in the data.
+There seems to be more variability in earlier months, but overall a downward trend.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 df%>%group_by(Daylight)%>%
@@ -383,33 +249,19 @@ df%>%group_by(Daylight)%>%
   ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
 ```
 
-Looking at the line alone shows that there is very clearly a downward trend, meaning that there is a correlation to fewer daylight hours and more crashes.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + ylab("Number of Crashes") + geom_smooth(span = 0.3) + ylim(0,5000)
-```
+There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
 ### Conclusion:
 
-A number of conclusions can be drawn from this data analysis.
-
-1.  There is little to no correlation between travel direction during sunrise or sunset and crashes. This may be against common wisdom, but could be explained by glare affecting a driver regardless of travel direction.
-
-2.  There is a correlation between sunset or sunrise time and the number of crashes that happen. There appears to be a spike in crashes before sunrise and an even greater right after the sun goes down. This can possibly be explained by
-
-3.  There are more crashes near sunrise during winter months than summer months, perhaps because drivers do not adequately de-ice their vehicle before travelling
-
-4.  There is a correlation between a shorter day and more crashes. This could be related to colder weather conditions.
+A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
 
 ## Alcohol Analysis
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
-The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that sustances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
+The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that substances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
 # Creates new data set to do modifications on
 c <- crashes
@@ -435,7 +287,7 @@ c <- c %>%
 
 In order to perform further calculations, I also created some helper variables containing the total of crashes with and without alcohol, respectively.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of crashes without substance abuse
 (false_rows <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -448,7 +300,7 @@ In order to perform further calculations, I also created some helper variables c
 
 After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost \$3000 more on average.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
 (false_total_cost <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -469,9 +321,18 @@ true_total_cost / true_rows
 
 ```
 
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+c %>%
+  group_by(Drug_Usage) %>%
+  summarise(mean = mean(`Amount of Property Damage`,na.rm=TRUE)) %>%
+  ggplot(aes(x=Drug_Usage, y=mean)) + 
+  geom_col() + xlab("Alcohol Usage") + ylab("Average Property Damage") +
+  ggtitle("Average Property Damage by Alcohol Usage")
+```
+
 I also looked at the average fatalities per crash with and without alcohol. The actual values of the averages aren't super intuitive, as they are small decimals, but finding the average rate of fatalities is much more useful. When doing so, fatalities occur in sober crashes about 1 in 217 crashes, while fatalities in drunk crashes occur at about 1 in 20. This difference in fatality is expected, but I am shocked at how much higher it truly is.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of fatalities with and without substance abuse
 (false_total_fatal <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -493,9 +354,9 @@ true_total_fatal / true_rows
 
 Next, I decided to look into how time of day affects drunk driving. I plotted sober and drunk crashes and tried to find a pattern.
 
-```{r}
-#c <- c %>%
-#  mutate(Hour = parse_number(Hour))
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+c <- c %>%
+  mutate(Hour = parse_number(Hour))
 
 # Plot of all crashes by the hour
 c %>%
@@ -509,18 +370,23 @@ c %>%
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
 ```
 
-After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I creates a helper variable containing all crashes that occured between 10 P.M. and 4 A.M.
+After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I created a helper variable containing all crashes that occurred between 10 P.M. and 4 A.M.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+# Contains only crashes occuring between 10 P.M. and 4 A.M.
 c_night <- c %>%
-  filter(Hour >= 22 | Hour <= 3)
+  filter(Hour >= 22 | Hour <= 4)
 
+# Total number of night crashes
 (total_night <- nrow(c_night))
 
+# Total number of crashes with drug usage during the night
 (true_total_night <- c_night %>%
   filter(Drug_Usage == TRUE) %>%
   nrow())
+```
 
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Crashes with substances are 4% of all crashes
 true_rows / nrow(c)
 
@@ -531,7 +397,7 @@ true_total_night / total_night
 
 The next unit of time I decided to look at was day of the week. I expected to see a large spike on weekends, especially on Friday and Saturday. To do so, I once again plotted both sober and drunk crashes by day of the week and compared them.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of all crashes by day of the week
 c %>%
   ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
@@ -550,33 +416,30 @@ c %>%
 
 ```
 
-Finally, I looked at crashes by day of the year, utilizing multiple graphs to demonstrate the relationships.
+Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
 
-```{r}
-# Plot of crashes with drug usage by month
-c %>%
-  filter(Drug_Usage == TRUE) %>%
-  ggplot(aes(x=Month)) + geom_bar()
-# No real pattern
-
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes with drug usage by day of the year
 c %>%
   filter(Drug_Usage == TRUE) %>%
   ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
 # No real pattern except for two huge outliers, New Year's Day and the Fourth of # July
+```
+
+This graph shows all crashes in Iowa by day of year:
+
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
 # Plot of all crashes by day of the year
 c %>%
   ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
 # Emphasizes difference between drunk and sober crashes as there is little
 # pattern in this graph
+```
 
-# Plot of crashes by days in Decemeber
-c %>%
-  filter(Month == 12) %>%
-  ggplot(aes(x=Day)) + geom_bar()
-# The lowest amount of crashes in the whole year happen on Christmas Day
+The fact that New Year's day has triple the amount of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January.
 
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
 c %>%
   filter(Month == 1) %>%
@@ -585,7 +448,7 @@ c %>%
 # most amount of drunk crashes
 ```
 
-## Conclusions
+## Conclusion
 
 1.  Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
 
@@ -593,14 +456,10 @@ c %>%
 
 3.  The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
 
-## Further Analysis
-
-In the future, a variety of analysis could be performed to improve understanding of car crashes in Iowa. For example, we would be interested in further looking into how rush hour traffic can affect car crashes, especially geographically. Furthermore, looking into temperature trends would also provide insightful analysis.
-
-Another area we would be interested in looking further into is looking at alcohol-related crashes by location. Looking into how alcohol affects the type of crash would also provide useful information.
-
 ## Bibliography
 
-1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot.gov/mvd/stats/crashhistory.pdf>.
+1 "Iowa Motor Vehicle Crashes - 1925 to 2020" *Iowa Department of Transportation,* 2022, <https://iowadot>. gov/mvd/stats/crashhistory.pdf.
 
-2 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
+2 "Ames, Iowa, USA - sunrise, sunset, and daylength" *timeanddate*, <https://www.timeanddate.com/> sun/\@4846834?month=12&year=2020.
+
+3 "Safe Driving Dusk and Dawn" *Delaware Safety Council,* <https://delawaresafety.org/resources/> Documents/Safety%20Documents/Safe%20Driving%20-%20%20Dusk%20and%20Dawn.pdf.
