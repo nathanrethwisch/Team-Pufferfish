@@ -287,7 +287,7 @@ c <- c %>%
 
 In order to perform further calculations, I also created some helper variables containing the total of crashes with and without alcohol, respectively.
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of crashes without substance abuse
 (false_rows <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -386,7 +386,7 @@ c_night <- c %>%
   nrow())
 ```
 
-```{r}
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Crashes with substances are 4% of all crashes
 true_rows / nrow(c)
 
@@ -416,7 +416,7 @@ c %>%
 
 ```
 
-Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year.
+Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes with drug usage by day of the year
@@ -424,6 +424,11 @@ c %>%
   filter(Drug_Usage == TRUE) %>%
   ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
 # No real pattern except for two huge outliers, New Year's Day and the Fourth of # July
+```
+
+This graph shows all crashes in Iowa by day of year:
+
+```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
 # Plot of all crashes by day of the year
 c %>%
