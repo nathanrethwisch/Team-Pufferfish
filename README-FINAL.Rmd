@@ -259,9 +259,9 @@ A number of conclusions can be drawn from this data analysis. First, we can conc
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
-The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that substances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
+The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that sustances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
 
 # Creates new data set to do modifications on
 c <- crashes
@@ -300,7 +300,7 @@ In order to perform further calculations, I also created some helper variables c
 
 After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost \$3000 more on average.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
 # Total cost of crashes without substance abuse
 (false_total_cost <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -321,18 +321,9 @@ true_total_cost / true_rows
 
 ```
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-c %>%
-  group_by(Drug_Usage) %>%
-  summarise(mean = mean(`Amount of Property Damage`,na.rm=TRUE)) %>%
-  ggplot(aes(x=Drug_Usage, y=mean)) + 
-  geom_col() + xlab("Alcohol Usage") + ylab("Average Property Damage") +
-  ggtitle("Average Property Damage by Alcohol Usage")
-```
-
 I also looked at the average fatalities per crash with and without alcohol. The actual values of the averages aren't super intuitive, as they are small decimals, but finding the average rate of fatalities is much more useful. When doing so, fatalities occur in sober crashes about 1 in 217 crashes, while fatalities in drunk crashes occur at about 1 in 20. This difference in fatality is expected, but I am shocked at how much higher it truly is.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
 # Total number of fatalities with and without substance abuse
 (false_total_fatal <- c %>%
   filter(Drug_Usage == FALSE) %>%
@@ -354,9 +345,9 @@ true_total_fatal / true_rows
 
 Next, I decided to look into how time of day affects drunk driving. I plotted sober and drunk crashes and tried to find a pattern.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-c <- c %>%
-  mutate(Hour = parse_number(Hour))
+```{r}
+#c <- c %>%
+#  mutate(Hour = parse_number(Hour))
 
 # Plot of all crashes by the hour
 c %>%
@@ -370,23 +361,18 @@ c %>%
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
 ```
 
-After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I created a helper variable containing all crashes that occurred between 10 P.M. and 4 A.M.
+After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I creates a helper variable containing all crashes that occured between 10 P.M. and 4 A.M.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-# Contains only crashes occuring between 10 P.M. and 4 A.M.
+```{r}
 c_night <- c %>%
-  filter(Hour >= 22 | Hour <= 4)
+  filter(Hour >= 22 | Hour <= 3)
 
-# Total number of night crashes
 (total_night <- nrow(c_night))
 
-# Total number of crashes with drug usage during the night
 (true_total_night <- c_night %>%
   filter(Drug_Usage == TRUE) %>%
   nrow())
-```
 
-```{r}
 # Crashes with substances are 4% of all crashes
 true_rows / nrow(c)
 
@@ -397,7 +383,7 @@ true_total_night / total_night
 
 The next unit of time I decided to look at was day of the week. I expected to see a large spike on weekends, especially on Friday and Saturday. To do so, I once again plotted both sober and drunk crashes by day of the week and compared them.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
 # Plot of all crashes by day of the week
 c %>%
   ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
@@ -416,9 +402,15 @@ c %>%
 
 ```
 
-Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year.
+Finally, I looked at crashes by day of the year, utilizing multiple graphs to demonstrate the relationships.
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+# Plot of crashes with drug usage by month
+c %>%
+  filter(Drug_Usage == TRUE) %>%
+  ggplot(aes(x=Month)) + geom_bar()
+# No real pattern
+
 # Plot of crashes with drug usage by day of the year
 c %>%
   filter(Drug_Usage == TRUE) %>%
@@ -430,11 +422,13 @@ c %>%
   ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
 # Emphasizes difference between drunk and sober crashes as there is little
 # pattern in this graph
-```
 
-The fact that New Year's day has triple the amount of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January.
+# Plot of crashes by days in Decemeber
+c %>%
+  filter(Month == 12) %>%
+  ggplot(aes(x=Day)) + geom_bar()
+# The lowest amount of crashes in the whole year happen on Christmas Day
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
 c %>%
   filter(Month == 1) %>%
