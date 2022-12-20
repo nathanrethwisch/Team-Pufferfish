@@ -63,7 +63,9 @@ with_amsmath: true
 # with_dblfloatfix: true
 
 bibliography: references.bib
-output: rticles::ieee_article
+output:
+  bookdown::pdf_book:
+    base_format: rticles::ieee_article
 #citation_sorting: none   ## used as sorting option of the biblatex package (if selected)
 ---
 
@@ -72,7 +74,7 @@ output: rticles::ieee_article
 Introduction
 =============
 
-According to the @iowadot, there are over 50,000 crashes per year in Iowa alone. These crashes cause millions in property damage, and unfortunately, the loss of life, with over 300 people dying to vehicular crashes per year. It is important to gain a greater understanding of the causes of these crashes in order to better create prevention strategies and protect the drivers on the road. Furthermore, by informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the correlations between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
+According to the @iowadot, there are over 50,000 crashes per year in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the correlations between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
 
 # The Data
 
@@ -92,9 +94,13 @@ library(hms)
 crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
-This data set comes from the Iowa Department of Transportation contains data for every recorded vehicle crash since January 2009. It is updated monthly by the Iowa Department of Transportation,
+This data set comes from the Iowa Department of Transportation \url{https://icat.iowadot.gov/} and contains data for every recorded vehicle crash between January 2009 **HH: you should set an end date. Otherwise the number of observations below will look strange**. It is updated monthly by the Iowa Department of Transportation,
 
-In total there are 728,442 observations in the data set and `r ncol(crashes)` variables, which included information on data and time of crash, location, number of injuries or fatalities, weather and road conditions, property damage, the number of passengers, and whether or not the driver was under the influence.
+In total there are 728,442 observations in the data set and `r ncol(crashes)` variables, which included information on date and time of crash, location, the number of passengers, the severity of the crash measured in property damage, number of injuries, or fatalities; the weather and road conditions, and whether or not the driver was driving under the influence.
+
+**HH: move the number of crashes by day up here to give an overview first**
+
+**HH:  move the next paragraph to the appendix**
 
 Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
@@ -399,15 +405,38 @@ c %>%
 # No real pattern except for two huge outliers, New Year's Day and the Fourth of # July
 ```
 
-This graph shows all crashes in Iowa by day of year:
+Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of year. 
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r avgcrashes, out.width="\\columnwidth", fig.cap="Average number of crashes by day of the year. Spring and summer months see on average fewer crashes than the rest of the year. From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days in some of the years. There is a clear holiday effect in the number of crashes: Jan 1, July 4, Thanksgiving, and, in particular, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year (shown in orange). "}
 
-# Plot of all crashes by day of the year
-c %>%
-  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
-# Emphasizes difference between drunk and sober crashes as there is little
-# pattern in this graph
+## Plot of all crashes by day of the year
+#c %>%
+#  ggplot(aes(x=Day)) + geom_bar() + facet_wrap(~Month)
+
+drugs <- c %>% 
+  filter(Drug_Usage == TRUE) %>%
+  group_by(Year, Month, Day) %>% count() %>% 
+  ungroup(Year) %>% summarize(avg=mean(n))
+
+# Plot of average number of crashes by day of the year
+c %>% group_by(Year, Month, Day) %>% count() %>% 
+  ungroup(Year) %>% summarize(avg=mean(n)) %>% ggplot(aes(x=Day,y=avg)) + 
+  geom_bar(stat="identity", fill="grey50") + 
+  geom_bar(aes(y=avg*5), stat="identity", data = drugs, fill="darkorange") + 
+  facet_wrap(~Month) + theme_bw() + 
+  xlab("Day of the Month") +
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Average number of crashes",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~./5, name="Drugs (alcohol) involved")
+  ) +
+  theme(
+    axis.title.y = element_text(color = "grey50", size=13),
+    axis.text.y = element_text(color = "grey50"),
+    axis.title.y.right = element_text(color = "darkorange", size=13),
+    axis.text.y.right = element_text(color = "darkorange")
+  )
 ```
 
 The fact that New Year's day has triple the amount of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January.
