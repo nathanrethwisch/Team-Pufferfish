@@ -146,9 +146,11 @@ After cleaning the data, our analysis focused on how time of the day when car cr
 
 Because evening and morning times are variable throughout the year, one must look at when the sun is rising and setting. Because this data was not included in the original data set, the data was scraped from timeanddate.com~2~. The data includes sunrise and sunset times for Ames, Iowa in 2020. The reasoning behind using Ames was that it is the nearest major town to the geographical center of Iowa. This would limit variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one minute change in sunrise and sunset times. By using Ames, these discrepancies to under three minutes. The year 2020 was chosen because it is the most recent leap year and would provide meaningful data for February 29.
 
-The table that was used for the data collection is as follows:
+Figure \@ref(fig:timeanddate) shows an example table from timeanddate that was used for the data collection is as follows:
 
-![](../images/paste-D669372C.png){ height=10% }
+```{r timeanddate, fig.cap="Example table of the data collected for sunrise and sunset times."}
+knitr::include_graphics("../images/paste-5719206D.png")
+```
 
 Using a function, the data was extracted for each month in 2020 and joined with the original crash data set.
 
