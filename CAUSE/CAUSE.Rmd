@@ -420,15 +420,20 @@ Next, I decided to look into how time of day affects drunk driving. I plotted so
 #  mutate(Hour = parse_number(Hour))
 
 # Plot of all crashes by the hour
-crash %>%
+gg1<- crash %>%
   ggplot(aes(x=Hour)) + geom_bar()
 # Most crashes happen during "rush hour" from 4 to 6 P.M.
 
 # Plot of all crashes with sustance abuse by the hour
-crash %>%
+gg2<- crash %>%
   filter(Drug_Usage == TRUE) %>%
   ggplot(aes(x=Hour)) + geom_bar()
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
+```
+
+```{r}
+library("gridExtra")  
+grid.arrange(gg1, gg2, ncol = 2) 
 ```
 
 After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I created a helper variable containing all crashes that occurred between 10 P.M. and 4 A.M.
@@ -460,7 +465,7 @@ The next unit of time I decided to look at was day of the week. I expected to se
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of all crashes by day of the week
-crash %>%
+w1 <- crash %>%
   ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
 # Crashes occur pretty much uniformly throughout the week
 #
@@ -468,13 +473,17 @@ crash %>%
 # home faster?
 
 # Plot of all crashes with substance abuse by day of the week
-c %>%
+w2<- crash %>%
   filter(Drug_Usage == TRUE) %>%
   ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
 # Majority of these crashes occur on the weekends, Saturday and Sunday are
 # likely higher than Friday because they happen early in the "morning" after
 # Friday and Saturday nights
 
+```
+
+```{r}
+grid.arrange(w1, w2, ncol = 2)
 ```
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
