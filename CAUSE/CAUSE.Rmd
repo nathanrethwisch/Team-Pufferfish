@@ -95,15 +95,11 @@ crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 #crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
-This data set comes from the Iowa Department of Transportation \url{https://icat.iowadot.gov/} and contains data for every recorded vehicle crash between January 2009 and September 2022. It is updated monthly by the Iowa Department of Transportation,
+This data set comes from the Iowa Department of Transportation \url{https://icat.iowadot.gov/} and contains data for every recorded vehicle crash between January 2009 and September 2022. It is updated monthly by the Iowa Department of Transportation.
 
 In total there are 728,442 observations in the data set and `r ncol(crashes)` variables, which included information on date and time of crash, location, the number of passengers, the severity of the crash measured in property damage, number of injuries, or fatalities; the weather and road conditions, and whether or not the driver was driving under the influence.
 
 **HH: move the number of crashes by day up here to give an overview first**
-
-**HH: move the next paragraph to the appendix**
-
-Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -235,7 +231,7 @@ There is very clearly a downward trend, showing that there is a correlation to f
 
 A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
 
-## Alcohol Analysis
+# Alcohol Analysis
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
@@ -468,6 +464,10 @@ The conclusion goes here.
 \clearpage
 
 # Appendix {#appendix .unnumbered}
+
+**HH: move the next paragraph to the appendix**
+
+Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 # Data Cleaning
 
