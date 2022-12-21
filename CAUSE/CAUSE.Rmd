@@ -143,6 +143,15 @@ crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_
 
 # Sunrise/Sunset Analysis
 
+```{r}
+#Shows animal-related crashes 
+crashes <- crashes %>%
+ mutate(Hour = parse_number(Hour))
+
+crashes %>%filter(`Major Cause` == "Animal")%>%
+  ggplot(aes(x = Hour)) + geom_bar() + ylab("Number of Animal-Related Crashes") + xlab("Hour")
+```
+
 After cleaning the data, our analysis focused on how time of the day when car crashes happen. We hypothesize that more crashes will happen in the morning and evening as the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly.
 
 ## Data Extraction
@@ -331,9 +340,6 @@ true_total_fatal / true_rows
 Next, I decided to look into how time of day affects drunk driving. I plotted sober and drunk crashes and tried to find a pattern.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-crash <- crash %>%
-  mutate(Hour = parse_number(Hour))
-
 # Plot of all crashes by the hour
 crash %>%
   ggplot(aes(x=Hour)) + geom_bar()
