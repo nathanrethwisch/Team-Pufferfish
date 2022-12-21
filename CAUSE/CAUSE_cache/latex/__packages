@@ -9,3 +9,5 @@ stringr
 forcats
 rvest
 hms
+ggthemes
+ggtext

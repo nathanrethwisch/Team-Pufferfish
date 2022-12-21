@@ -408,7 +408,7 @@ Nathan Rethwisch %% -- end for/affiliation.institution.author
 \IEEEauthorblockA{Data Science\\
 Iowa State University\\
 Ames, IA 50011
-\\nreth@iastate.edu
+\\youremail@iastate.edu
 }
 \and
 \IEEEauthorblockN{
@@ -418,7 +418,7 @@ Zachary Swayne %% -- end for/affiliation.institution.author
 \IEEEauthorblockA{Statistics\\
 Iowa State University\\
 Ames, IA 50011
-\\zswayne@iastate.edu
+\\youremail@iastate.edu
 }
  %% -- end for/affiliation.institution
  %% -- end if/affiliation.institution-columnar
@@ -507,19 +507,52 @@ keyword 1; keyword 2
 
 According to the Iowa Department of Transportation (2022), there are over 50,000 crashes per year in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the correlations between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
 
-\hypertarget{the-data}{%
-\section{The Data}\label{the-data}}
+The data for this project is collected by the Iowa Department of Transportation and made publicly available at \url{https://icat.iowadot.gov/}. Each row contains data for every recorded vehicle crash since January 2009 and is updated monthly. For each crash a large number of variables are collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
 
-This data set comes from the Iowa Department of Transportation \url{https://icat.iowadot.gov/} and contains data for every recorded vehicle crash between January 2009 and September 2022. It is updated monthly by the Iowa Department of Transportation.
+Figure \ref{fig:map} shows a map of all location of crashes in Iowa in 2021. We see that crashes are truly everywhere.
 
-In total there are 728,442 observations in the data set and 37 variables, which included information on date and time of crash, location, the number of passengers, the severity of the crash measured in property damage, number of injuries, or fatalities; the weather and road conditions, and whether or not the driver was driving under the influence.
+\begin{figure}
 
-\textbf{HH: move the number of crashes by day up here to give an overview first}
+{\centering \includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/map-1} 
+
+}
+
+\caption{Locations of all crashes in Iowa in 2021. Each crash is drawn with an opacity of only 5\% to provide an x-ray of high-density regions in the spatial distribution. Only when twenty crashes happen in the same location, do we see a fully saturated black dot on the map. The map paints a picture of Iowa's population centers and its network of roads.}\label{fig:map}
+\end{figure}
+
+In our project we are interested in the two biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. For that, we are looking at \textbf{XXX roadmap for the paper XXX}
+
+\hypertarget{first-overview}{%
+\section{First overview}\label{first-overview}}
+
+Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \ref{fig:avgcrashes} shows the average number of crashes in Iowa by day of year. We see that during spring and summer months there are on average fewer crashes than during the rest of the year. From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange). The fact that New Year's day has triple the number of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January. We will further investigate the relationship between alcohol and crashes in section \textbf{\emph{XXX}}.
+
+\textbf{HH: move this next paragraph to the appendix}
+
+Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude columns were also created from the `Position' column to further explore where crashes happen in Iowa.
+
+\begin{figure}
+
+{\centering \includegraphics[width=\columnwidth]{CAUSE_files/figure-latex/avgcrashes-1} 
+
+}
+
+\caption{Average number of crashes by day of the year.  }\label{fig:avgcrashes}
+\end{figure}
+
+Figure \ref{fig:daytime} shows barcharts of the average number of car crashes over the course of a day throughout the months of the year. Initially, we see two prominent peaks in the number of crashes around the times of morning and evening commutes. However, in late Spring a third peak appears at a later time that only disappears by September and merges to a single huge peak with the evening commuting time in November. Looking at crashes involving animals we see that this third peak is strongly correlated with the time that animals are hit in the evening. We are going to look at this phenomenon more closer in section \textbf{XXX}.
+
+\begin{figure}
+
+{\centering \includegraphics[width=\columnwidth]{CAUSE_files/figure-latex/daytime-1} 
+
+}
+
+\caption{Average number of crashes by hour of the day and month of the year. Crashes involving animal hits are shown in orange. }\label{fig:daytime}
+\end{figure}
 
 \hypertarget{sunrisesunset-analysis}{%
 \section{Sunrise/Sunset Analysis}\label{sunrisesunset-analysis}}
-
-\begin{center}\includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-1-1} \end{center}
 
 After cleaning the data, our analysis focused on how time of the day when car crashes happen. We hypothesize that more crashes will happen in the morning and evening as the driver is travelling into the sun and has to deal with sun glare, preventing them from seeing clearly.
 
@@ -577,14 +610,7 @@ One point of note is looking into how the length of the day affects car crashes.
 
 There seems to be more variability in earlier months, but overall a downward trend.
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-5-1} 
-
-}
-
-\caption{A graph of all crashes based on the length of the day with a line fitted using LOESS smoothing}\label{fig:unnamed-chunk-5}
-\end{figure}
+\begin{center}\includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-5-1} \end{center}
 
 There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
@@ -594,7 +620,7 @@ There is very clearly a downward trend, showing that there is a correlation to f
 A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
 
 \hypertarget{alcohol-analysis}{%
-\section{Alcohol Analysis}\label{alcohol-analysis}}
+\subsection{Alcohol Analysis}\label{alcohol-analysis}}
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
@@ -622,25 +648,6 @@ The next unit of time I decided to look at was day of the week. I expected to se
 
 \begin{center}\includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-14-2} \end{center}
 
-Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
-
-\begin{center}\includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-15-1} \end{center}
-
-Figure \ref{fig:avgcrashes} shows the average number of crashes in Iowa by day of year.
-
-\begin{figure}
-
-{\centering \includegraphics[width=\columnwidth]{CAUSE_files/figure-latex/avgcrashes-1} 
-
-}
-
-\caption{Average number of crashes by day of the year. Spring and summer months see on average fewer crashes than the rest of the year. From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days in some of the years. There is a clear holiday effect in the number of crashes: Jan 1, July 4, Thanksgiving, and, in particular, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year (shown in orange). }\label{fig:avgcrashes}
-\end{figure}
-
-The fact that New Year's day has triple the amount of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January.
-
-\begin{center}\includegraphics[width=0.9\columnwidth]{CAUSE_files/figure-latex/unnamed-chunk-16-1} \end{center}
-
 \hypertarget{conclusion-1}{%
 \subsection{Conclusion}\label{conclusion-1}}
 
@@ -664,10 +671,6 @@ The conclusion goes here.
 \hypertarget{appendix}{%
 \section*{Appendix}\label{appendix}}
 \addcontentsline{toc}{section}{Appendix}
-
-\textbf{HH: move the next paragraph to the appendix}
-
-Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the `Position' column to further explore where crashes happen in Iowa.
 
 \hypertarget{data-cleaning}{%
 \section{Data Cleaning}\label{data-cleaning}}
