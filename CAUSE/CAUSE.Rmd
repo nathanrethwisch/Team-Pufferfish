@@ -97,7 +97,7 @@ crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 #crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
-The data for this project is collected by the Iowa Department of Transportation and made publicly available at \url{https://icat.iowadot.gov/}. Each row contains data for every recorded vehicle crash since January 2009 and is updated monthly. For each crash a large number of variables are collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
+The data for this project is collected by the Iowa Department of Transportation and made publicly available at \url{https://icat.iowadot.gov/}. Each row contains data for every recorded vehicle crash since January 2009 and is updated monthly. For each crash, a large number of variables are collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
 
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -133,7 +133,7 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes are truly everywhere.
+Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes happen everywhere, but there are certain highways and cities that contribute to larger numbers of crashes.
 
 ```{r map, fig.cap="Locations of all crashes in Iowa in 2021. Each crash is drawn with an opacity of only 5\\% to provide an x-ray of high-density regions in the spatial distribution. Only when twenty crashes happen in the same location, do we see a fully saturated black dot on the map. The map paints a picture of Iowa's population centers and its network of roads."}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
@@ -145,11 +145,16 @@ crashes%>% filter(Year==2021, Longitude > 40.24) %>%
   ggthemes::theme_map()
 ```
 
-In our project we are interested in the two biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. For that, we are looking at **XXX roadmap for the paper XXX**
+In our project we are interested in the two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. For that, we are looking at **XXX roadmap for the paper XX**
+
+```{r}
+View(crashes%>%group_by(`Major Cause`)%>%
+  summarise(n = n()))
+```
 
 # First overview
 
-Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of year. We see that during spring and summer months there are on average fewer crashes than during the rest of the year. From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange). The fact that New Year's day has triple the number of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January. We will further investigate the relationship between alcohol and crashes in section ***XXX***.
+Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of year. We see that during spring and summer months there are on average fewer crashes than during the rest of the year. From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange). The fact that New Year's day has triple the number of drug-involved crashes as any other day is particularly scary because January first has the lowest amount of overall crashes in the month of January. We will further investigate the relationship between alcohol and crashes in section IV.
 
 ````{=html}
 <!--Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
@@ -163,10 +168,6 @@ c %>%
 ```
 -->
 ````
-
-**HH: move this next paragraph to the appendix**
-
-Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 ```{r avgcrashes, out.width="\\columnwidth", fig.cap="Average number of crashes by day of the year.  "}
 
@@ -275,7 +276,7 @@ df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 
 Figure \@ref(fig:sunrise) shows the minutes from sunrise compared to number of crashes, with a line denoting when the sunrise time is:
 
-```{r sunrise,  fig.cap="A graph of all crashes by the difference between crash time and sunrise."}
+```{r sunrise,  fig.cap="All crashes shown by the difference between crash time and sunrise."}
 #A graph of all crashes by the difference between crash time and sunrise
 df%>%
   group_by(sunriseDiff)%>%
@@ -287,7 +288,7 @@ This clearly appears that there is a small spike, starting right before the sun 
 
 There also seems to be a noticeable spike around 750 minutes after sunrise time. This likely corresponds to sunset time, so it is only logical to look at how sunset time affects car crashes. Figure \@ref(fig:sunset) shows the minutes away from sunset, with a line denoting where the sun sets.
 
-```{r sunset, fig.cap="A graph of all crashes by the difference between crash time and sunset"}
+```{r sunset, fig.cap="All crashes shown by the difference between crash time and sunset"}
 #A graph of all crashes by the difference between crash time and sunset
 df%>%
   group_by(sunsetDiff)%>%
@@ -315,7 +316,7 @@ There is very clearly a downward trend, showing that there is a correlation to f
 
 A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
 
-## Alcohol Analysis
+# Alcohol Analysis
 
 For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
 
@@ -324,21 +325,21 @@ The main data set has a variable titled "Drug or Alcohol" with eight different l
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
 # Creates new data set to do modifications on
-c <- crashes
+crash <- crashes
 
 # Changes the drug or alcohol column to a factor so that all the levels can be
 # found
-c$`Drug or Alcohol` <- as.factor(c$`Drug or Alcohol`)
+crash$`Drug or Alcohol` <- as.factor(crash$`Drug or Alcohol`)
 
 # Finds the levels of the column
-levels(c$`Drug or Alcohol`)
+levels(crash$`Drug or Alcohol`)
 
-c %>%
+crash %>%
   filter( (`Drug or Alcohol` == "None Indicated") | (`Drug or Alcohol` == "Refused")) %>%
   select(`Drug or Alcohol`)
 
 # Creates new column that combines all the levels of substance abuse
-c <- c %>%
+crash <- crash %>%
   mutate(Drug_Usage = 
            (`Drug or Alcohol` != "None Indicated") &
            (`Drug or Alcohol` != "Refused"))
@@ -349,26 +350,26 @@ In order to perform further calculations, I also created some helper variables c
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of crashes without substance abuse
-(false_rows <- c %>%
+(false_rows <- crash %>%
   filter(Drug_Usage == FALSE) %>%
   select(`Amount of Property Damage`) %>%
   nrow())
 
 # Total amount of crashes with substance abuse
-(true_rows <- nrow(c) - false_rows)
+(true_rows <- nrow(crash) - false_rows)
 ```
 
 After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost \$3000 more on average.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
-(false_total_cost <- c %>%
+(false_total_cost <- crash %>%
   filter(Drug_Usage == FALSE) %>%
   select(`Amount of Property Damage`) %>%
   sum(na.rm=TRUE))
 
 # Total cost of crashes with substance abuse
-(true_total_cost <- c %>%
+(true_total_cost <- crash %>%
   filter(Drug_Usage == TRUE) %>%
   select(`Amount of Property Damage`) %>%
   sum(na.rm=TRUE))
@@ -382,7 +383,7 @@ true_total_cost / true_rows
 ```
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-c %>%
+crash %>%
   group_by(Drug_Usage) %>%
   summarise(mean = mean(`Amount of Property Damage`,na.rm=TRUE)) %>%
   ggplot(aes(x=Drug_Usage, y=mean)) + 
@@ -399,7 +400,7 @@ I also looked at the average fatalities per crash with and without alcohol. The 
   select(`Number of Fatalities`) %>%
   sum(na.rm=TRUE))
 
-(true_total_fatal <- c %>%
+(true_total_fatal <- crash %>%
   filter(Drug_Usage == TRUE) %>%
   select(`Number of Fatalities`) %>%
   sum(na.rm=TRUE))
@@ -419,12 +420,12 @@ Next, I decided to look into how time of day affects drunk driving. I plotted so
 #  mutate(Hour = parse_number(Hour))
 
 # Plot of all crashes by the hour
-c %>%
+crash %>%
   ggplot(aes(x=Hour)) + geom_bar()
 # Most crashes happen during "rush hour" from 4 to 6 P.M.
 
 # Plot of all crashes with sustance abuse by the hour
-c %>%
+crash %>%
   filter(Drug_Usage == TRUE) %>%
   ggplot(aes(x=Hour)) + geom_bar()
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
@@ -434,7 +435,7 @@ After that, I decided to try and find what percentage of crashes that occur duri
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Contains only crashes occuring between 10 P.M. and 4 A.M.
-c_night <- c %>%
+c_night <- crash %>%
   filter(Hour >= 22 | Hour <= 4)
 
 # Total number of night crashes
@@ -448,7 +449,7 @@ c_night <- c %>%
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Crashes with substances are 4% of all crashes
-true_rows / nrow(c)
+true_rows / nrow(crash)
 
 # Crashes with substances are 14% of all crashes from 10 P.M. to 3 A.M.
 true_total_night / total_night
@@ -459,7 +460,7 @@ The next unit of time I decided to look at was day of the week. I expected to se
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of all crashes by day of the week
-c %>%
+crash %>%
   ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
 # Crashes occur pretty much uniformly throughout the week
 #
@@ -478,7 +479,7 @@ c %>%
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
-c %>%
+crash %>%
   filter(Month == 1) %>%
   ggplot(aes(x=Day)) + geom_bar()
 # New Year's Day actually has the least amount of crashes in January, but the
@@ -504,6 +505,8 @@ The conclusion goes here.
 # Appendix {#appendix .unnumbered}
 
 # Data Cleaning
+
+Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
 # Data on Sunsets and Sunrises
 
