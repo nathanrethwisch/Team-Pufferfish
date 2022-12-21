@@ -471,11 +471,11 @@ The conclusion goes here.
 
 # Appendix {#appendix .unnumbered}
 
+# Data Cleaning
+
 **HH: move the next paragraph to the appendix**
 
 Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude was columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
-
-# Data Cleaning
 
 # Data on Sunsets and Sunrises
 
