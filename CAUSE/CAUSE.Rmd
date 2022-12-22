@@ -292,7 +292,7 @@ suns<- df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes") + ggtitle("Animal Crashes vs. Sunset Time") + xlim(-500,500)
 ```
 
-```{r sunTime, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = A comparison of animal-related crashes with minutes away from sunrise (left) and minutes away from sunset(right)}
+```{r sunTime, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A comparison of animal-related crashes with minutes away from sunrise (left) and minutes away from sunset(right)"}
 grid.arrange(sunr, suns, ncol = 2)
 ```
 
