@@ -282,7 +282,7 @@ df%>%
 
 This clearly appears that there is a small spike, beginning approximately 100 minutes before the sun rises. However, after the sun rises, the number of animal-related crashes reduces drastically. One explanation for this is that an increased number of drivers are on the road during the rush hour which often falls just before sunrise. Due to low visibility which decreases reaction time, drivers may be more likely to cause a vehicular accident.
 
-There also seems to be a noticeable spike approximately 750 minutes after sunrise time. This presumably corresponds to the sun setting, so we also decided to plot animal-related crashes in relation to when the sun sets. Figure \@ref(fig:sunset) shows the minutes away from sunset, with a line denoting where the sun sets.
+There also seems to be a noticeable spike approximately 750 minutes after sunrise time. This presumably corresponds to the sun setting, so we also decided to plot animal-related crashes in relation to when the sun sets. Figure \@ref(fig:sunset) plots how many minutes away from sunset there are when a crash happens, with a line denoting where the sun sets.
 
 ```{r, fig.cap="All crashes shown by the difference between crash time and sunset"}
 #A graph of all crashes by the difference between crash time and sunset
@@ -294,7 +294,7 @@ df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
-There appears to be a pretty drastic jump right after the sun sets. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
+\@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
 ## Daylight Analysis
 
