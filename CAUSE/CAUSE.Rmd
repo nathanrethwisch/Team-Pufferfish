@@ -37,14 +37,14 @@ affiliation:
     - name: Iowa State University
       department: Data Science
       location: Ames, IA 50011
-      email: youremail@iastate.edu
+      email: nreth@iastate.edu
       mark: 1
       author:
         - name: Nathan Rethwisch
     - name: Iowa State University
       department: Statistics
       location: Ames, IA 50011
-      email: youremail@iastate.edu
+      email: zswayne@iastate.edu
       mark: 2
       author:
         - name: Zachary Swayne
@@ -163,7 +163,7 @@ c %>%
 -->
 ````
 
-```{r avgcrashes, out.width="\\columnwidth", fig.cap="Average number of crashes by day of the year.  "}
+```{r avgcrashes, out.width="\\columnwidth", fig.cap="Average number of crashes by day of the year."}
 
 ## Plot of all crashes by day of the year
 #c %>%
@@ -202,7 +202,7 @@ crashes %>% group_by(Year, Month, Day) %>% count() %>%
 
 Figure \@ref(fig:daytime) shows bar charts of the average number of car crashes over the course of a day throughout the months of the year. Initially, we see two prominent peaks in the number of crashes around the times of morning and evening commutes. However, in late Spring a third peak appears at a later time that only disappears by September and merges to a single huge peak with the evening commuting time in November. Looking at crashes involving animals we see that this third peak is strongly correlated with the time that animals are hit in the evening. We are going to look at this phenomenon more closer in section III.
 
-```{r daytime, fig.cap="Average number of crashes by hour of the day and month of the year. Crashes involving animal hits are shown in orange. ",  out.width="\\columnwidth"}
+```{r daytime, fig.cap="Average number of crashes by hour of the day and month of the year. Crashes involving animal hits are shown in orange.",  out.width="\\columnwidth"}
 animals <- crashes %>% filter(`Major Cause`=="Animal") %>% group_by(Year, Month, Hour) %>% count() %>% 
   ungroup(Year) %>% summarize(avg=mean(n))
 
@@ -283,7 +283,7 @@ This clearly appears that there is a small spike, beginning approximately 100 mi
 
 There also seems to be a noticeable spike approximately 750 minutes after sunrise time. This presumably corresponds to the sun setting, so we also decided to plot animal-related crashes in relation to when the sun sets. Figure \@ref(fig:sunset) plots how many minutes away from sunset there are when a crash happens, with a line denoting where the sun sets.
 
-```{r, fig.cap="All crashes shown by the difference between crash time and sunset"}
+```{r sunset, fig.cap="All crashes shown by the difference between crash time and sunset"}
 #A graph of all crashes by the difference between crash time and sunset
 
 df%>%
@@ -297,9 +297,9 @@ df%>%
 
 ## Daylight Analysis
 
-One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
+One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of crashes by length of the day, with a line fit using LOESS smoothing"}
 df%>%
   group_by(Daylight)%>%
   summarise (n = n())%>%
@@ -349,7 +349,7 @@ crash <- crash %>%
 
 ## Property Damage
 
-We found that although crashes while under the influence are less common, they cause almost \$3000 more damage, on average. **INSERT FIGURE THING** shows the difference in property damage between drunk and sober crashes.
+We found that although crashes while under the influence are less common, they cause almost \$3000 more damage, on average. \@ref(fig:property)shows the difference in property damage between drunk and sober crashes.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
@@ -376,7 +376,7 @@ avg_Drunk <- format(round(avg_Drunk, 2), nsmall = 2)
 
 ```
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r property, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A plot of the differnce between average property damage among sober drivers and drivers under the influence of drugs and alcohol"}
 dat <- paste0("$", c(avg_Sober, avg_Drunk))
 
 
@@ -385,7 +385,8 @@ crash %>%
   summarise(mean = mean(`Amount of Property Damage`,na.rm=TRUE)) %>%
   ggplot(aes(x=Drug_Usage, y=mean, fill = Drug_Usage)) + 
   geom_col() + xlab("Alcohol Usage") + ylab("Average Property Damage") +
-  ggtitle("Average Property Damage by Alcohol Usage") + scale_x_discrete(labels=c("No Drugs Present", "Drugs Present"))+ geom_text(aes(label = dat), vjust = -0.2)
+  ggtitle("Average Property Damage by Alcohol Usage") + scale_x_discrete(labels=c("No Drugs Present", "Drugs Present"))+ geom_text(aes(label = dat), vjust = -0.2) + scale_fill_discrete("Drug Usage", 
+                      labels=c("No Drugs Present", "Drugs/Alcohol Present"))
 ```
 
 We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (\~0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (\~5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
@@ -428,9 +429,9 @@ gg2<- crash %>%
 
 ## Time of Day
 
-Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in **INSERT FIGURE THING,** crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
+Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in \@ref(fig:crashHour)crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
 
-```{r, warning = FALSE, echo = FALSE}
+```{r crashHour, warning = FALSE, echo = FALSE, fig.cap = "Crashes by hour shown across all drivers(left) and inebriated drivers (right)"}
 library("gridExtra")  
 grid.arrange(gg1, gg2, ncol = 2)
 ```
@@ -477,9 +478,9 @@ w2<- crash %>%
 
 ```
 
-Next, we decided to look at drinking by day of the week. We expected to see a large spike in drunk crashes on the weekends, especially Saturday. **FIGURE THING** shows a comparison between crashes among all drivers and those under the influence of drugs.
+Next, we decided to look at drinking by day of the week. We expected to see a large spike in drunk crashes on the weekends, especially Saturday. \@ref(fig:crashDay) shows a comparison between crashes among all drivers and those under the influence of drugs.
 
-```{r, warning = FALSE, message = FALSE, echo = FALSE}
+```{r crashDay, warning = FALSE, message = FALSE, echo = FALSE, fig.cap= "Crashes among all days shown among all drivers (left) and drivers operating under the influence (right)"}
 grid.arrange(w1, w2, ncol = 2)
 ```
 
@@ -496,11 +497,9 @@ crash %>%
 
 # Conclusion
 
-Based on our data, we found sufficient evidence that the dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights.
+Based on our data, we found sufficient evidence that the dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
 
-We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
-
-From our findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of being inebriated while operating a motor vehicle. Those efforts should be continued as they are important to keeping the roads safe.
+From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of being inebriated while operating a motor vehicle. Those efforts should be continued as they are important to keeping the roads safe.
 
 Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for changes in elevation, and differences location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
