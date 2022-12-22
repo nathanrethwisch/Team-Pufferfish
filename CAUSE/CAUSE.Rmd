@@ -390,7 +390,7 @@ crash %>%
                       labels=c("No Drugs Present", "Drugs/Alcohol Present"))
 ```
 
-We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (\~0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (\~5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
+We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of fatalities with and without substance abuse
