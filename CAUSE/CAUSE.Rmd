@@ -81,6 +81,7 @@ According to the @iowadot, there are over 50,000 crashes per year in Iowa alone.
 ```{r setup, cache=FALSE, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.align = "center", out.width = "0.9\\columnwidth")
 
+library("gridExtra")
 library(tidyverse)
 library(rvest)
 library(dplyr)
@@ -266,38 +267,38 @@ df$sunDiff <- with(df,pmin(abs(sunsetDiff), abs(sunriseDiff)))
 
 ## Sunrise/Sunset Analysis
 
-After joining the two data sets, we used sunrise and sunset times to calculate the number of minutes each crash was away from when the sun set or rose. We then compared this to the number of animal-related crashes in Iowa.
-
-Figure \@ref(fig:sunrise) shows the minutes from sunrise compared to number of animal-related crashes, with a line denoting when the sunrise time is:
-
-```{r sunrise,  fig.cap="All crashes shown by the difference between crash time and sunrise."}
+```{r sunrise, results = FALSE, echo= FALSE, warning = FALSE, echo = FALSE, fig.cap="All crashes shown by the difference between crash time and sunrise."}
 #A graph of all crashes by the difference between crash time and sunrise
-df%>%
+sunr<- df%>%
   filter(`Major Cause` == "Animal")%>%
   group_by(sunriseDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + ylab("Number of Crashes") + xlab("Minutes From Sunrise") + geom_vline(xintercept = 0)
+  ggplot(aes(x = sunriseDiff, y = n)) + geom_line() + ylab("Number of Crashes") + xlab("Minutes From Sunrise") + geom_vline(xintercept = 0) + ggtitle("Animal Crashes vs. Sunrise Time") + xlim (-500,500)
 ```
 
-This clearly appears that there is a small spike, beginning approximately 100 minutes before the sun rises. However, after the sun rises, the number of animal-related crashes reduces drastically. One explanation for this is that an increased number of drivers are on the road during the rush hour which often falls just before sunrise. Due to low visibility which decreases reaction time, drivers may be more likely to cause a vehicular accident.
+After joining the two data sets, we used sunrise and sunset times to calculate the number of minutes each crash was away from when the sun set or rose. We then compared this to the number of animal-related crashes in Iowa.
 
-There also seems to be a noticeable spike approximately 750 minutes after sunrise time. This presumably corresponds to the sun setting, so we also decided to plot animal-related crashes in relation to when the sun sets. Figure \@ref(fig:sunset) plots how many minutes away from sunset there are when a crash happens, with a line denoting where the sun sets.
+Figure \@ref(fig:sunTime) plots crashes in comparison to both sunrise and sunset time. Sunrise is plotted on the left, with a line denoting when the sun rises. This there is a small spike, beginning approximately 100 minutes before the sun rises. However, after the sun has risen, the number of animal-related crashes reduces drastically. One explanation for this is that an increased number of drivers are on the road during the rush hour which often falls just before sunrise. Due to low visibility which decreases reaction time, drivers may be more likely to cause a vehicular accident.
 
-```{r sunset, fig.cap="All crashes shown by the difference between crash time and sunset"}
+The right graph in Figure \@ref(fig:sunTime) plots crashes in terms of minutes away from sunset. Sunset time is denoted by a vertical line. This shows the reverse phenomenon - crashes start to spike *after* the sun has set. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
+
+```{r sunset, echo = FALSE, warning = FALSE, message = FALSE, fig.cap="All crashes shown by the difference between crash time and sunset"}
 #A graph of all crashes by the difference between crash time and sunset
 
-df%>%
+suns<- df%>%
   filter(`Major Cause` == "Animal")%>%
   group_by(sunsetDiff)%>%
   summarise(n = n())%>%
-  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
+  ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes") + ggtitle("Animal Crashes vs. Sunset Time") + xlim(-500,500)
 ```
 
-Figure \@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
+```{r sunTime, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = A comparison of animal-related crashes with minutes away from sunrise (left) and minutes away from sunset(right)}
+grid.arrange(sunr, suns, ncol = 2)
+```
 
 ## Daylight Analysis
 
-One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. Figure \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
+One point of note is looking into how the length of the day affects car crashes. Figure \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
 
 ```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of crashes by length of the day, with a line fit using LOESS smoothing"}
 df%>%
@@ -306,7 +307,7 @@ df%>%
   ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
 ```
 
-While there is more variability in earlier months, there is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As stated earlier, dusk and dawn prove to be some of the most dangerous times to drive.
+While there is more variability in earlier months, there is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.
 
 # Alcohol Analysis
 
@@ -432,7 +433,6 @@ gg2<- crash %>%
 Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in figure \@ref(fig:crashHour)crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
 
 ```{r crashHour, warning = FALSE, echo = FALSE, fig.cap = "Crashes by hour shown across all drivers(left) and inebriated drivers (right)"}
-library("gridExtra")  
 grid.arrange(gg1, gg2, ncol = 2)
 ```
 
