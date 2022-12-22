@@ -50,7 +50,7 @@ affiliation:
         - name: Zachary Swayne
 keywords: ["keyword 1", "keyword 2"]
 abstract: 
-  According to the CDC (2020), the top cause of death for US adults aged 1-54 is traffic accidents. Understanding more about what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about a variety of accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. From our analysis, we find several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can serve to better inform drivers and lawmakers who seek to improve road safety. We also present information about future research that may be done in the study area.
+  According to the @causeofdeath, the top cause of death for US adults aged 1-54 is traffic accidents. Understanding more about what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about a variety of accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. From our analysis, we find several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can serve to better inform drivers and lawmakers who seek to improve road safety. We also present information about future research that may be done in the study area.
 
 # use some specific Tex packages if needed. 
 # with_ifpdf: true
@@ -91,9 +91,9 @@ library(ggtext) # install.packages("ggtext")
 
 ```{r data, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Use this if the below code doesn't work - file must be stored on your device under the same folder.
-crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
+#crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 
-#crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
 The data for this project is collected by the Iowa Department of Transportation and made publicly available at \url{https://icat.iowadot.gov/}. Each row contains data for every recorded vehicle crash since January 2009 and is updated monthly. For each crash, a large number of variables are collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
