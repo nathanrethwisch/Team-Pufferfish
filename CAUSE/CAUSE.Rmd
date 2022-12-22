@@ -50,7 +50,7 @@ affiliation:
         - name: Zachary Swayne
 keywords: ["keyword 1", "keyword 2"]
 abstract: 
-  According to the CDC (LINK TO CITATION), the top cause of death for US adults aged 1-54 is traffic accidents. Understanding more about what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about a variety of accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. From our analysis, we find several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can serve to better inform drivers and lawmakers who seek to improve road safety. We also present information about future research that may be done in the study area.
+  According to the CDC (2020), the top cause of death for US adults aged 1-54 is traffic accidents. Understanding more about what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about a variety of accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. From our analysis, we find several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can serve to better inform drivers and lawmakers who seek to improve road safety. We also present information about future research that may be done in the study area.
 
 # use some specific Tex packages if needed. 
 # with_ifpdf: true
@@ -295,6 +295,19 @@ df%>%
 
 \@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
+## Daylight Analysis
+
+One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df%>%
+  group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
+```
+
+While there is more variability in earlier months, there is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As stated earlier, dusk and dawn prove to be some of the most dangerous times to drive.
+
 # Alcohol Analysis
 
 For the next part of our analysis, we looked into the relationship between alcohol/drug usage and car crashes. Our previous analysis showed that certain days of the year had significant spikes in alcohol-related accidents. Our exploration focuses on the difference alcohol use while driving makes compared to driving sober.
@@ -481,30 +494,17 @@ crash %>%
 # most amount of drunk crashes
 ```
 
-## Daylight Analysis
-
-One point of note is looking into how the length of the day affects car crashes. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
-
-There seems to be more variability in earlier months, but overall a downward trend.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%
-  group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
-```
-
-There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
-
 # Conclusion
 
-1.  Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
+Based on our data, we found sufficient evidence that the dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights.
 
-2.  Nighttime and Friday and Saturday nights are the times with the most drunk driving, so it may be wise to avoid the roads at those times.
+We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
 
-3.  The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
+From our findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of being inebriated while operating a motor vehicle. Those efforts should be continued as they are important to keeping the roads safe.
 
-The conclusion goes here.
+Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for changes in elevation, and differences location can account for up to three minutes of error when analyzing sunset and sunrise times.
+
+Regardless, these limitations provide minimal challenges to the results of our findings. We would however, recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs, as well as inform research into safety measures that can be applied to mitigate the adverse effects of dusk driving.
 
 <!-- conference papers do not normally have an appendix -->
 
@@ -512,11 +512,13 @@ The conclusion goes here.
 
 # Appendix {#appendix .unnumbered}
 
-# Data Cleaning
+## Data Cleaning/Processing
 
 Data cleaning included changing empty strings and illogical values into NA values. Day, month, and year values were extracted using R's lubridate package. Latitude and longitude columns were also created from the 'Position' column to further explore where crashes happen in Iowa.
 
-# Data on Sunsets and Sunrises
+Information scraped from @timeanddate included hours of daylight, sunrise and sunset time, and date. Each month of the year was contained in a separate url which was a challenge of scraping the data. Furthermore, conditional cases of time changes presented additional challenges.
+
+The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that substances were not involved. Because of this, we created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
 
 \clearpage
 
