@@ -296,21 +296,6 @@ df%>%
 
 \@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
-## Daylight Analysis
-
-One point of note is looking into how the length of the day affects car crashes. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
-
-There seems to be more variability in earlier months, but overall a downward trend.
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-df%>%
-  group_by(Daylight)%>%
-  summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
-```
-
-There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
-
 # Alcohol Analysis
 
 For the next part of our analysis, we looked into the relationship between alcohol/drug usage and car crashes. Our previous analysis showed that certain days of the year had significant spikes in alcohol-related accidents. Our exploration focuses on the difference alcohol use while driving makes compared to driving sober.
@@ -368,15 +353,19 @@ We found that although crashes while under the influence are less common, they c
   sum(na.rm=TRUE))
   
 # Average property damage of crash without substance abuse
-false_total_cost / false_rows
+avg_Sober<- false_total_cost / false_rows
 
 # Average property damage of crash with substance abuse
-true_total_cost / true_rows
+avg_Drunk <- true_total_cost / true_rows
+
+avg_Sober<- format(round(avg_Sober, 2), nsmall = 2)
+avg_Drunk <- format(round(avg_Drunk, 2), nsmall = 2)
+
 
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-dat <- paste0("$", c(true_total_cost, false_total_cost))
+dat <- paste0("$", c(avg_Sober, avg_Drunk))
 
 
 crash %>%
@@ -415,19 +404,19 @@ crash <- crash %>%
 
 # Plot of all crashes by the hour
 gg1<- crash %>%
-  ggplot(aes(x=Hour)) + geom_bar() + ggtitle("Crashes among all drivers")
+  ggplot(aes(x=Hour)) + geom_bar() + ggtitle("Crashes among all drivers") + ylab("Number of Crashes")
 # Most crashes happen during "rush hour" from 4 to 6 P.M.
 
 # Plot of all crashes with sustance abuse by the hour
 gg2<- crash %>%
   filter(Drug_Usage == TRUE) %>%
-  ggplot(aes(x=Hour)) + geom_bar()+ ggtitle("Crashes among drunk drivers")
+  ggplot(aes(x=Hour)) + geom_bar()+ ggtitle("Crashes among drunk drivers") + ylab("Number of Crashes")
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
 ```
 
 ## Time of Day
 
-Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in **INSERT FIGURE THING,** crashes are inversed among drunk drivers, with most crashes happening between
+Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in **INSERT FIGURE THING,** crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
 
 ```{r, warning = FALSE, echo = FALSE}
 library("gridExtra")  
@@ -457,12 +446,10 @@ true_total_night / total_night
 
 ```
 
-The next unit of time I decided to look at was day of the week. I expected to see a large spike on weekends, especially on Friday and Saturday. To do so, I once again plotted both sober and drunk crashes by day of the week and compared them.
-
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of all crashes by day of the week
 w1 <- crash %>%
-  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
+  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + coord_flip() + ylab ("Number of Crashes") + ggtitle("Crashes Among All Drivers")
 # Crashes occur pretty much uniformly throughout the week
 #
 # Slight uptick on Friday, people driving home more recklessly to get
@@ -471,16 +458,20 @@ w1 <- crash %>%
 # Plot of all crashes with substance abuse by day of the week
 w2<- crash %>%
   filter(Drug_Usage == TRUE) %>%
-  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 45))
+  ggplot(aes(x=`Day of Week`)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + coord_flip() + ylab("Number of Crashes") + ggtitle("Drunk Crashes")
 # Majority of these crashes occur on the weekends, Saturday and Sunday are
 # likely higher than Friday because they happen early in the "morning" after
 # Friday and Saturday nights
 
 ```
 
-```{r}
+Next, we decided to look at drinking by day of the week. We expected to see a large spike in drunk crashes on the weekends, especially Saturday. **FIGURE THING** shows a comparison between crashes among all drivers and those under the influence of drugs.
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
 grid.arrange(w1, w2, ncol = 2)
 ```
+
+Among all drivers, Friday is the most common day for car crashes. One explanation for this is that more people are on the road due to weekend travel. Drunk drivers, however, tend to crash more often on Sundays and Saturdays. This is likely due to drinking on Friday and Saturday night which leads to crashes early on Saturday and Sunday morning.
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
@@ -490,6 +481,21 @@ crash %>%
 # New Year's Day actually has the least amount of crashes in January, but the
 # most amount of drunk crashes
 ```
+
+## Daylight Analysis
+
+One point of note is looking into how the length of the day affects car crashes. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
+
+There seems to be more variability in earlier months, but overall a downward trend.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+df%>%
+  group_by(Daylight)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
+```
+
+There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
 ## Conclusion
 
