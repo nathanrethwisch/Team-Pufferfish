@@ -293,11 +293,11 @@ df%>%
   ggplot(aes(x = sunsetDiff, y = n)) + geom_line()+geom_vline(xintercept = 0)+ xlab("Minutes from Sunset")+ylab("Number of Crashes")
 ```
 
-\@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
+Figure \@ref(fig:sunset) shows that there is a large increase in animal-related crashes directly after sunset. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
 ## Daylight Analysis
 
-One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
+One point of note is looking into how the length of the day affects car crashes, regardless of whether or not drugs or alcohol are present. Figure \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
 
 ```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of crashes by length of the day, with a line fit using LOESS smoothing"}
 df%>%
@@ -349,7 +349,7 @@ crash <- crash %>%
 
 ## Property Damage
 
-We found that although crashes while under the influence are less common, they cause almost \$3000 more damage, on average. \@ref(fig:property)shows the difference in property damage between drunk and sober crashes.
+We found that although crashes while under the influence are less common, they cause almost \$3000 more damage, on average. Figure \@ref(fig:property)shows the difference in property damage between drunk and sober crashes.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
@@ -429,7 +429,7 @@ gg2<- crash %>%
 
 ## Time of Day
 
-Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in \@ref(fig:crashHour)crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
+Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in figure \@ref(fig:crashHour)crashes are inverted among drunk drivers, with most crashes happening between 11pm and 3 am.
 
 ```{r crashHour, warning = FALSE, echo = FALSE, fig.cap = "Crashes by hour shown across all drivers(left) and inebriated drivers (right)"}
 library("gridExtra")  
@@ -478,7 +478,7 @@ w2<- crash %>%
 
 ```
 
-Next, we decided to look at drinking by day of the week. We expected to see a large spike in drunk crashes on the weekends, especially Saturday. \@ref(fig:crashDay) shows a comparison between crashes among all drivers and those under the influence of drugs.
+In addition, we have analyzed drug-related crashes by day of the week. We expected to see a large spike in drunk crashes on the weekends, especially Saturday. Figure \@ref(fig:crashDay) shows a comparison between crashes among all drivers and those under the influence of drugs.
 
 ```{r crashDay, warning = FALSE, message = FALSE, echo = FALSE, fig.cap= "Crashes among all days shown among all drivers (left) and drivers operating under the influence (right)"}
 grid.arrange(w1, w2, ncol = 2)
