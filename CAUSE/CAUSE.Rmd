@@ -298,7 +298,7 @@ df%>%
 
 ## Daylight Analysis
 
-One point of note is looking into how the length of the day affects car crashes. The following graph shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
+One point of note is looking into how the length of the day affects car crashes. **INSERT FIGURE** shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS smoothing.
 
 There seems to be more variability in earlier months, but overall a downward trend.
 
@@ -306,20 +306,14 @@ There seems to be more variability in earlier months, but overall a downward tre
 df%>%
   group_by(Daylight)%>%
   summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")
 ```
 
 There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
-### Conclusion:
-
-A number of conclusions can be drawn from this data analysis. First, we can conclude that there is a correlation between sunset and sunrise time and frequency of crashes. The 30-minute window after the sun sets, especially, is correlated with an increase in crashes in Iowa. There is also a correlation between higher numbers of crashes and fewer daylight hours, but this may be correlated with the winter months being more dangerous for drivers. For future research, we would like to to further look into how rush hour traffic may affect these trends.
-
 # Alcohol Analysis
 
-For my analysis, I would like to look into the relationship between alcohol and car crashes. I especially want to look into how the severity of car crashes and alcohol are related and what times are the most dangerous in terms of drunk drivers.
-
-The main data set has a variable titled "Drug or Alcohol" with eight different levels. However, only two of these levels signify that substances were not involved. Because of this I created a helper variable titled "Drug_Usage" that is TRUE when there are substances involved and FALSE when there is none present.
+For the next part of our analysis, we looked into the relationship between alcohol/drug usage and car crashes. Our previous analysis showed that certain days of the year had significant spikes in alcohol-related accidents. Our exploration focuses on the difference alcohol use while driving makes compared to driving sober.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -345,8 +339,6 @@ crash <- crash %>%
 
 ```
 
-In order to perform further calculations, I also created some helper variables containing the total of crashes with and without alcohol, respectively.
-
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of crashes without substance abuse
 (false_rows <- crash %>%
@@ -358,7 +350,9 @@ In order to perform further calculations, I also created some helper variables c
 (true_rows <- nrow(crash) - false_rows)
 ```
 
-After that, I found the average property damage that results from crashes with and without drunk driving. As I expected, drunk crashes do cause more damage, almost \$3000 more on average.
+## Property Damage
+
+We found that although crashes while under the influence are less common, they cause almost \$3000 more damage, on average. **INSERT FIGURE THING** shows the difference in property damage between drunk and sober crashes.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
@@ -381,16 +375,19 @@ true_total_cost / true_rows
 
 ```
 
-```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+dat <- paste0("$", c(true_total_cost, false_total_cost))
+
+
 crash %>%
   group_by(Drug_Usage) %>%
   summarise(mean = mean(`Amount of Property Damage`,na.rm=TRUE)) %>%
-  ggplot(aes(x=Drug_Usage, y=mean)) + 
+  ggplot(aes(x=Drug_Usage, y=mean, fill = Drug_Usage)) + 
   geom_col() + xlab("Alcohol Usage") + ylab("Average Property Damage") +
-  ggtitle("Average Property Damage by Alcohol Usage")
+  ggtitle("Average Property Damage by Alcohol Usage") + scale_x_discrete(labels=c("No Drugs Present", "Drugs Present"))+ geom_text(aes(label = dat), vjust = -0.2)
 ```
 
-I also looked at the average fatalities per crash with and without alcohol. The actual values of the averages aren't super intuitive, as they are small decimals, but finding the average rate of fatalities is much more useful. When doing so, fatalities occur in sober crashes about 1 in 217 crashes, while fatalities in drunk crashes occur at about 1 in 20. This difference in fatality is expected, but I am shocked at how much higher it truly is.
+We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (\~0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (\~5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of fatalities with and without substance abuse
@@ -412,30 +409,30 @@ true_total_fatal / true_rows
 
 ```
 
-Next, I decided to look into how time of day affects drunk driving. I plotted sober and drunk crashes and tried to find a pattern.
-
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
-#c <- c %>%
-#  mutate(Hour = parse_number(Hour))
+crash <- crash %>%
+  mutate(Hour = parse_number(Hour))
 
 # Plot of all crashes by the hour
 gg1<- crash %>%
-  ggplot(aes(x=Hour)) + geom_bar()
+  ggplot(aes(x=Hour)) + geom_bar() + ggtitle("Crashes among all drivers")
 # Most crashes happen during "rush hour" from 4 to 6 P.M.
 
 # Plot of all crashes with sustance abuse by the hour
 gg2<- crash %>%
   filter(Drug_Usage == TRUE) %>%
-  ggplot(aes(x=Hour)) + geom_bar()
+  ggplot(aes(x=Hour)) + geom_bar()+ ggtitle("Crashes among drunk drivers")
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
 ```
 
-```{r}
-library("gridExtra")  
-grid.arrange(gg1, gg2, ncol = 2) 
-```
+## Time of Day
 
-After that, I decided to try and find what percentage of crashes that occur during late night hours involve alcohol. To do so, I created a helper variable containing all crashes that occurred between 10 P.M. and 4 A.M.
+Next we looked at when crashes happened among drivers. Similar to our analysis in section II, we found that there were spikes in crashes at sunrise and sunset hours. However, as shown in **INSERT FIGURE THING,** crashes are inversed among drunk drivers, with most crashes happening between
+
+```{r, warning = FALSE, echo = FALSE}
+library("gridExtra")  
+grid.arrange(gg1, gg2, ncol = 2)
+```
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Contains only crashes occuring between 10 P.M. and 4 A.M.
