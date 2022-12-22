@@ -49,9 +49,8 @@ affiliation:
       author:
         - name: Zachary Swayne
 keywords: ["keyword 1", "keyword 2"]
-abstract: |
-  The abstract goes here.
-  On multiple lines eventually.
+abstract: 
+  According to the CDC (LINK TO CITATION), the top cause of death for US adults aged 1-54 is traffic accidents. Understanding more about what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about a variety of accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. From our analysis, we find several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can serve to better inform drivers and lawmakers who seek to improve road safety. We also present information about future research that may be done in the study area.
 
 # use some specific Tex packages if needed. 
 # with_ifpdf: true
@@ -201,7 +200,7 @@ crashes %>% group_by(Year, Month, Day) %>% count() %>%
   )
 ```
 
-Figure \@ref(fig:daytime) shows bar charts of the average number of car crashes over the course of a day throughout the months of the year. Initially, we see two prominent peaks in the number of crashes around the times of morning and evening commutes. However, in late Spring a third peak appears at a later time that only disappears by September and merges to a single huge peak with the evening commuting time in November. Looking at crashes involving animals we see that this third peak is strongly correlated with the time that animals are hit in the evening. We are going to look at this phenomenon more closer in section II.
+Figure \@ref(fig:daytime) shows bar charts of the average number of car crashes over the course of a day throughout the months of the year. Initially, we see two prominent peaks in the number of crashes around the times of morning and evening commutes. However, in late Spring a third peak appears at a later time that only disappears by September and merges to a single huge peak with the evening commuting time in November. Looking at crashes involving animals we see that this third peak is strongly correlated with the time that animals are hit in the evening. We are going to look at this phenomenon more closer in section III.
 
 ```{r daytime, fig.cap="Average number of crashes by hour of the day and month of the year. Crashes involving animal hits are shown in orange. ",  out.width="\\columnwidth"}
 animals <- crashes %>% filter(`Major Cause`=="Animal") %>% group_by(Year, Month, Hour) %>% count() %>% 
@@ -497,15 +496,13 @@ df%>%
 
 There is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes.
 
-## Conclusion
+# Conclusion
 
 1.  Alcohol drastically increases the danger and severity of crashes: fatalities, injuries, and property damage all occur at an increased rate.
 
 2.  Nighttime and Friday and Saturday nights are the times with the most drunk driving, so it may be wise to avoid the roads at those times.
 
 3.  The worst nights to drive on are New Year's Eve and the Fourth of July, as they by far have the most drunk accidents of any other days in the year.
-
-# Conclusion
 
 The conclusion goes here.
 
