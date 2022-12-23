@@ -92,9 +92,9 @@ library(ggtext) # install.packages("ggtext")
 
 ```{r data, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Use this if the below code doesn't work - file must be stored on your device under the same folder.
-#crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
+crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 
-crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+#crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
 The data for this project is collected by the Iowa Department of Transportation and made publicly available at \url{https://icat.iowadot.gov/}. Each row contains data for every recorded vehicle crash since January 2009 and is updated monthly. For each crash, a large number of variables are collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
@@ -233,6 +233,7 @@ Figure \@ref(fig:timeanddate) shows an example table from @timeanddate that was 
 
 ```{r timeanddate, fig.cap="Example table of the data collected for sunrise and sunset times."}
 knitr::include_graphics("../images/paste-5719206D.png")
+View(crashes)
 ```
 
 ```{r load_sun}
@@ -300,11 +301,30 @@ grid.arrange(sunr, suns, ncol = 2)
 
 One point of note is looking into how the length of the day affects car crashes. Figure \@ref(fig:daylight)shows the number of crashes based on the length of the day. A line of best fit was added to the graph using LOESS (Locally Weighted Scatterplot Smoothing).
 
+```{r}
+df%>%
+  group_by(Daylight, Month)%>%
+  summarise (n = n())%>%
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")+geom_smooth()
+```
+
 ```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of crashes by length of the day, with a line fit using LOESS smoothing"}
 df%>%
-  group_by(Daylight)%>%
+  group_by(Daylight, Month)%>%
+  filter(`Major Cause` == "Animal")%>%
   summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") + geom_smooth(span = 0.3)
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") +      geom_segment(aes(x = 38000,y = 900, xend = 37000, yend = 900),
+                  arrow = arrow(length = unit(0.5, "cm"))) + 
+  geom_label(aes(x=38000,y=925, label = "November"), size=3,
+             hjust = 0, vjust = "inward",
+             nudge_x = 0.05, nudge_y = 2)+
+  geom_segment(aes(x = 37000,y = 270, xend = 36000, yend = 220),
+                  arrow = arrow(length = unit(0.5, "cm"))) + 
+  geom_label(aes(x=37000,y=270, label = "February"), size=3,
+             hjust = 0, vjust = "inward",
+             nudge_x = 0.05, nudge_y = 2)
+
+
 ```
 
 While there is more variability in earlier months, there is very clearly a downward trend, showing that there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.
