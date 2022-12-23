@@ -74,7 +74,7 @@ output:
 
 # Introduction
 
-According to the @iowadot, there are over 50,000 crashes anually in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the relationships between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
+According to the @iowadot, there are over 50,000 crashes annually in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the relationships between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
 
 <!--# The Data-->
 
@@ -98,11 +98,9 @@ crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 #crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
-<<<<<<< HEAD
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash; the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
-=======
+
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether or not the driver was driving under the influence.
->>>>>>> 74eee324e025097ebe88891234fdcf736fdb3b3b
 
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -150,7 +148,7 @@ crashes%>% filter(Year==2021, Longitude > 40.24) %>%
   ggthemes::theme_map()
 ```
 
-In our project, we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. In section II, we will present a short overview of the data and motivate our two lines of investigation. In section III, we explore the relationship between car crashes and daylight hours and demonstrate the underlying relationship to crashes with animals. In section IV, we close with a discussion of the effects of alcohol involvement on crashes. \vspace{-20pt}
+In our project, we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. In section II, we will present a short overview of the data and motivate our two lines of investigation. In section III, we explore the relationship between car crashes and daylight hours and demonstrate the underlying relationship to crashes with animals. In section IV, we close with a discussion of the effects of alcohol involvement on crashes.
 
 # First overview
 
