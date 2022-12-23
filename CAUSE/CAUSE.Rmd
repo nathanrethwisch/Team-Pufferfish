@@ -98,7 +98,11 @@ crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 #crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
+<<<<<<< HEAD
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash; the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
+=======
+The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether or not the driver was driving under the influence.
+>>>>>>> 74eee324e025097ebe88891234fdcf736fdb3b3b
 
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
@@ -554,7 +558,7 @@ Figure \@ref(fig:crashDay) shows the average number of crashes by day of the wee
 w3
 ```
 
-Fridays are, on average, the day with the highest number of car crashes. One explanation for this is that more people are on the road due to weekend travel. However, DUI crashes happen more often by far on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night which leads to crashes early on Saturday and Sunday morning.
+Fridays are, on average, the day with the highest number of car crashes. One explanation for this trend is that more people are on the road due to weekend travel. However, DUI crashes occur at a much higher rate on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night leading to crashes early on Saturday and Sunday morning.
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
