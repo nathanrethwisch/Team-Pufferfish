@@ -308,19 +308,19 @@ df%>%
   ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes")+geom_smooth()
 ```
 
-```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of crashes by length of the day, with a line fit using LOESS smoothing"}
+```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "A graph of animal-related crashes by length of the day"}
 df%>%
   group_by(Daylight, Month)%>%
   filter(`Major Cause` == "Animal")%>%
   summarise (n = n())%>%
-  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") +      geom_segment(aes(x = 38000,y = 900, xend = 37000, yend = 900),
-                  arrow = arrow(length = unit(0.5, "cm"))) + 
-  geom_label(aes(x=38000,y=925, label = "November"), size=3,
+  ggplot(aes(x = Daylight, y = n)) + geom_point() + ylab("Number of Crashes") +      geom_segment(aes(x = 38000,y = 900, xend = 36900, yend = 900),
+                  arrow = arrow(length = unit(0.2, "cm"))) + 
+  geom_text(aes(x=38200,y=913, label = "November"), size=3,
              hjust = 0, vjust = "inward",
              nudge_x = 0.05, nudge_y = 2)+
-  geom_segment(aes(x = 37000,y = 270, xend = 36000, yend = 220),
-                  arrow = arrow(length = unit(0.5, "cm"))) + 
-  geom_label(aes(x=37000,y=270, label = "February"), size=3,
+  geom_segment(aes(x = 37000,y = 270, xend = 36200, yend = 220),
+                  arrow = arrow(length = unit(0.2, "cm"))) + 
+  geom_text(aes(x=37200,y=270, label = "February"), size=3,
              hjust = 0, vjust = "inward",
              nudge_x = 0.05, nudge_y = 2)
 
