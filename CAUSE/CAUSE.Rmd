@@ -93,9 +93,9 @@ theme_set(theme_bw())
 
 ```{r data, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Use this if the below code doesn't work - file must be stored on your device under the same folder.
-#crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
+crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 
-crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+#crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
@@ -134,8 +134,7 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-This report is based on crashes reported between Jan 1 2009 and the end of September 2022. 
-Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes happen everywhere, but there are certain highways and cities that contribute to higher numbers of crashes.
+This report is based on crashes reported between Jan 1 2009 and the end of September 2022. Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes happen everywhere, but there are certain highways and cities that contribute to higher numbers of crashes.
 
 ```{r map, fig.cap="Locations of all crashes in Iowa in 2021. Each crash is represented by a dot with an opacity of only 5\\% to provide an x-ray of high-density regions in the spatial distribution. Only when twenty crashes happen in the same location, do we see a fully saturated black dot on the map. The map paints a picture of Iowa's population centers and its network of roads."}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
@@ -147,13 +146,11 @@ crashes%>% filter(Year==2021, Longitude > 40.24) %>%
   ggthemes::theme_map()
 ```
 
-In our project we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. 
-In section II we will present a short overview of the data and motivate our two lines of investigation. In section III we explore the relationship between car crashes and day light hours and demonstrate the underlying relationship  to crashes with animals. In section IV we close with a discussion of effects of alcohol involvement on crashes.
-\vspace{-20pt}
+In our project we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. In section II we will present a short overview of the data and motivate our two lines of investigation. In section III we explore the relationship between car crashes and day light hours and demonstrate the underlying relationship to crashes with animals. In section IV we close with a discussion of effects of alcohol involvement on crashes. \vspace{-20pt}
 
 # First overview
 
-Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that during spring and summer months there are  fewer crashes (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years.  There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange).  On New Year's day  almost triple the number of drug-involved crashes happen compared to  any regular day of the year. We will further investigate the relationship between alcohol and crashes in section IV.
+Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that during spring and summer months there are fewer crashes (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange). On New Year's day almost triple the number of drug-involved crashes happen compared to any regular day of the year. We will further investigate the relationship between alcohol and crashes in section IV.
 
 ````{=html}
 <!--Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
@@ -231,8 +228,7 @@ The initial data overview uncovered a potential connection between animal-relate
 
 ## Data Extraction
 
-While the time of day controls human behavior,  sunrise and sunset regulate daily routines of animals. Times of sunrise and sunset depend on one's location and the time of the year. Light conditions, such as dusk and dawn, are included as part of the accident report, however their change over time made it hard for us to come to a single conclusion. We therefore thought it more appropriate for an anlysis to transform the time of an accident with respect to when the sun is rising and setting. Sunset and sunrise times were not included in the accident report. As an alternative data source we used the data portal by @timeanddate. Figure \@ref(fig:timeanddate) shows an example of the available data for the first week of March 2020 for Ames, IA. Rather than scraping all locations over time, we focused only on Ames. Ames is Iowa's major town closest to the state's geographical center. Making Ames the reference point limits the variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one-minute change in sunrise and sunset times. By using Ames, these discrepancies are limited to under three minutes. We chose to scrape data for 2020 because it is the most recent leap year and therefore provides data for February 29th (see appendix for details). 
-
+While the time of day controls human behavior, sunrise and sunset regulate daily routines of animals. Times of sunrise and sunset depend on one's location and the time of the year. Light conditions, such as dusk and dawn, are included as part of the accident report, however their change over time made it hard for us to come to a single conclusion. We therefore thought it more appropriate for an anlysis to transform the time of an accident with respect to when the sun is rising and setting. Sunset and sunrise times were not included in the accident report. As an alternative data source we used the data portal by @timeanddate. Figure \@ref(fig:timeanddate) shows an example of the available data for the first week of March 2020 for Ames, IA. Rather than scraping all locations over time, we focused only on Ames. Ames is Iowa's major town closest to the state's geographical center. Making Ames the reference point limits the variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one-minute change in sunrise and sunset times. By using Ames, these discrepancies are limited to under three minutes. We chose to scrape data for 2020 because it is the most recent leap year and therefore provides data for February 29th (see appendix for details).
 
 ```{r timeanddate, fig.cap="Example of  data on  sunrise and sunset times provided by timeanddate.com."}
 knitr::include_graphics("../images/paste-5719206D.png")
@@ -289,8 +285,7 @@ sunr<- df%>%
     limits = c(-250,250), breaks=c(-250, -125,-23,  125, 250))
 ```
 
-Sunrise and sunset times are incorporated into the crash records and allow us to calculate for each crash the distance in minutes from sunset or sunrise. Figure \@ref(fig:sunTime) gives an overview of the number of animal-related crashes in Iowa given time from sunrise (left) and time from sunset (right).
-The vertical lines denote the time of sunrise and sunset. The hashed lines are drawn through the times when animal hits spike. There is a gradual increase in the crashes beginning approximately 100 minutes before the sun rises. Once the sun is up, the number of animal-related crashes reduces drastically. <!--One explanation for this is that an increased number of drivers are on the road during the rush hour which often falls just before sunrise. Due to low visibility which decreases reaction time, drivers may be more likely to cause a vehicular accident.-->
+Sunrise and sunset times are incorporated into the crash records and allow us to calculate for each crash the distance in minutes from sunset or sunrise. Figure \@ref(fig:sunTime) gives an overview of the number of animal-related crashes in Iowa given time from sunrise (left) and time from sunset (right). The vertical lines denote the time of sunrise and sunset. The hashed lines are drawn through the times when animal hits spike. There is a gradual increase in the crashes beginning approximately 100 minutes before the sun rises. Once the sun is up, the number of animal-related crashes reduces drastically. <!--One explanation for this is that an increased number of drivers are on the road during the rush hour which often falls just before sunrise. Due to low visibility which decreases reaction time, drivers may be more likely to cause a vehicular accident.-->
 
 The plot on the right of Figure \@ref(fig:sunTime) shows the reverse phenomenon - crashes start to spike *after* the sun has set. According to the @duskdawn, driving at dusk is extremely dangerous, as one's eyes take time to adjust to the relative darkness, shadows hide animals and road features, and driver sometimes fail to turn on their headlights. This may be a reason why there is such a strong correlation between sunset time and a spike in car crashes.
 
@@ -316,7 +311,6 @@ suns<- df%>%
 grid.arrange(sunr, suns, ncol = 2) 
 ```
 
-
 ## Daylight Analysis
 
 Figure \@ref(fig:daylight) shows a summary of the average number of crashes by day by thelength of the day measured in daylight hours. A LOESS (Locally Weighted Scatterplot Smoothing) fit is added as a line to the scatterplot to summarize the relationship between length of day and the number of car crashes.
@@ -335,13 +329,11 @@ daylight %>%
   ylab("Number of Crashes") + 
   geom_smooth(span = 0.75, linewidth=.75, se=FALSE, colour = "black") +
   scale_x_time() +
-  geom_text(aes(label= dm), data = daylight %>% filter(n < 120, Daylight < 34000), nudge_x = 1500, color="grey50", size = 2.5) +
+   geom_text(aes(label= dm), data = daylight %>% filter(n < 120, Daylight < 34000), nudge_x = 1500, color="grey50", size = 2.5) +
   scale_colour_viridis_d("Month")
 ```
 
-While there is more variability in earlier months (as seen before in Figure \@ref(fig:avgcrashes)), there is a very clear  downward trend, showing that the average number of crashes decreases with more daylight. However, for the long summer days we see an increase in the number of crashes again -- most likely due to the additional opportunities that longer days provide. 
-<!--there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.-->
-<!--The difference in the average number of crashes in March compared to September is interesting: while the amount of daylight hours is about the same (around 12 hours), there are on average fewer crashes in March than in September.  -->
+While there is more variability in earlier months (as seen before in Figure \@ref(fig:avgcrashes)), there is a very clear downward trend, showing that the average number of crashes decreases with more daylight. However, for the long summer days we see an increase in the number of crashes again -- most likely due to the additional opportunities that longer days provide. <!--there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.--> <!--The difference in the average number of crashes in March compared to September is interesting: while the amount of daylight hours is about the same (around 12 hours), there are on average fewer crashes in March than in September.  -->
 
 # Alcohol Analysis
 
@@ -384,8 +376,7 @@ crash <- crash %>%
 
 ## Property Damage
 
-Although crashes involving drunk drivers are less common, they cause about 45\% or \$3000 more damage on average.
-<!--Figure \@ref(fig:property)shows the difference in property damage between drunk and sober crashes.-->
+Although crashes involving drunk drivers are less common, they cause about 45% or \$3000 more damage on average. <!--Figure @ref(fig:property)shows the difference in property damage between drunk and sober crashes.-->
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
@@ -476,8 +467,7 @@ gg2<- byhour_alc %>%
 
 ## Hour of the Day and Day of the Week
 
-Figure \@ref(fig:crashHour) (left) shows the familiar pattern on average number of crashes by the hour of the day. 
-This pattern changes considerably when one of the drivers is drunk. Most DUI crashes happen at night between 11 pm and 3 am.
+Figure \@ref(fig:crashHour) (left) shows the familiar pattern on average number of crashes by the hour of the day. This pattern changes considerably when one of the drivers is drunk. Most DUI crashes happen at night between 11 pm and 3 am.
 
 ```{r crashHour, warning = FALSE, echo = FALSE, fig.cap = "Crashes by hour shown across all drivers (left) and inebriated drivers (right)", fig.height=3.5}
 grid.arrange(gg1, gg2, ncol = 2)
@@ -579,17 +569,13 @@ crash %>%
 
 # Conclusion
 
-Based on our data, we found sufficient evidence that  dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
+Based on our data, we found sufficient evidence that dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
 
 From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of driving while intoxicated. Those efforts should be continued as they are important to keeping the roads safe.
 
 Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for changes in elevation, and differences location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
-Regardless, these limitations provide minimal challenges to the results of our findings. We would however, recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs, as well as inform research into safety measures that can be applied to mitigate the adverse effects of dusk driving.
-\hfill\newline
-\hfill\newline
-This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our github repository at BLINDED.
-<!-- conference papers do not normally have an appendix -->
+Regardless, these limitations provide minimal challenges to the results of our findings. We would however, recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs, as well as inform research into safety measures that can be applied to mitigate the adverse effects of dusk driving. \hfill\newline \hfill\newline This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our github repository at BLINDED. <!-- conference papers do not normally have an appendix -->
 
 \clearpage
 
