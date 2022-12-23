@@ -74,7 +74,7 @@ output:
 
 # Introduction
 
-According to the @iowadot, there are over 50,000 crashes per year in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the relationship between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
+According to the @iowadot, there are over 50,000 crashes per year in Iowa alone. These crashes cause millions of dollars in property damage and, unfortunately, the loss of life, with over 300 people dying in vehicular crashes each year. It is important to gain a greater understanding of the causes of these crashes to better create prevention strategies and protect the drivers on the road. By informing drivers of potential hazardous practices, they will be better prepared and encouraged to follow safe driving practices. The goal of this report is to explore some of the relationships between crashes and driving conditions to gain a better understanding of how to make the road a safer place.
 
 <!--# The Data-->
 
@@ -134,7 +134,7 @@ crashes<- crashes%>%
 crashes<- crashes%>%mutate(Latitude = parse_number(Latitude), Longitude = parse_number(Longitude))
 ```
 
-This report is based on crashes reported between Jan 1 2009 and the end of September 2022. Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes happen everywhere, but there are certain highways and cities that contribute to higher numbers of crashes.
+This report is based on crashes reported between Jan 1, 2009 and the end of September 2022. Figure \@ref(fig:map) shows a map of all location of crashes in Iowa in 2021. We see that crashes happen everywhere, but there are certain highways and cities that contribute to higher numbers of crashes.
 
 ```{r map, fig.cap="Locations of all crashes in Iowa in 2021. Each crash is represented by a dot with an opacity of only 5\\% to provide an x-ray of high-density regions in the spatial distribution. Only when twenty crashes happen in the same location, do we see a fully saturated black dot on the map. The map paints a picture of Iowa's population centers and its network of roads."}
 #Map of all crashes in Iowa. This shows that the data comes from all over the state
@@ -146,11 +146,11 @@ crashes%>% filter(Year==2021, Longitude > 40.24) %>%
   ggthemes::theme_map()
 ```
 
-In our project we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. In section II we will present a short overview of the data and motivate our two lines of investigation. In section III we explore the relationship between car crashes and day light hours and demonstrate the underlying relationship to crashes with animals. In section IV we close with a discussion of effects of alcohol involvement on crashes. \vspace{-20pt}
+In our project, we are interested in two of the biggest factors contributing to crashes: alcohol/drug involvement and crashes with animals. In section II we will present a short overview of the data and motivate our two lines of investigation. In section III we explore the relationship between car crashes and daylight hours and demonstrate the underlying relationship to crashes with animals. In section IV we close with a discussion of effects of alcohol involvement on crashes. \vspace{-20pt}
 
 # First overview
 
-Between Jan 1 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that during spring and summer months there are fewer crashes (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some of the years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes in comparison to the rest of the year (shown in orange). On New Year's day almost triple the number of drug-involved crashes happen compared to any regular day of the year. We will further investigate the relationship between alcohol and crashes in section IV.
+Between Jan 1, 2009 and the end of September in 2022 a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that there are fewer crashes during spring and summer months (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with large number of crashes in some years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes compared to the rest of the year (shown in orange). On New Year's Day almost triple the number of drug-involved crashes happen compared to any regular day of the year. We will further investigate the relationship between alcohol and crashes in section IV.
 
 ````{=html}
 <!--Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
@@ -337,7 +337,7 @@ While there is more variability in earlier months (as seen before in Figure \@re
 
 # Alcohol Analysis
 
-For the next part of our analysis, we are looking into the relationship between alcohol/drug usage and car crashes. The initial overview showed that certain days of the year have significant spikes in alcohol-related accidents. Our exploration focuses on the difference alcohol use makes compared to driving sober.
+For the next part of our analysis, we look into the relationship between alcohol/drug usage and car crashes. The initial overview showed that certain days of the year have significant spikes in alcohol-related accidents. Our exploration focuses on the difference alcohol use makes compared to driving sober.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -376,7 +376,7 @@ crash <- crash %>%
 
 ## Property Damage
 
-Although crashes involving drunk drivers are less common, they cause about 45% or \$3000 more damage on average. <!--Figure @ref(fig:property)shows the difference in property damage between drunk and sober crashes.-->
+Although crashes involving drunk drivers are less common, they cause about 45% or \$3000 more damage on average. <!--Figure @ref(fig:property)shows the difference in property damage between drunk and sober crashes.--> We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total cost of crashes without substance abuse
@@ -415,8 +415,6 @@ crash %>%
   ggtitle("Average Property Damage by Alcohol Usage") + scale_x_discrete(labels=c("No Drugs Present", "Drugs Present"))+ geom_text(aes(label = dat), vjust = -0.2) + scale_fill_discrete("Drug Usage", 
                       labels=c("No Drugs Present", "Drugs/Alcohol Present"))
 ```
-
-We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (5%). The presence of drugs and alcohol leads to an unprecedented rise in fatality rate.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Total number of fatalities with and without substance abuse
@@ -569,13 +567,13 @@ crash %>%
 
 # Conclusion
 
-Based on our data, we found sufficient evidence that dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
+Based on our data, we found sufficient evidence that dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, drastically increasing fatalities and property damage. These crashes are concentrated at night and during the weekends.
 
-From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of driving while intoxicated.
+From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of intoxicated driving.
 
-Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for changes in elevation, and differences location can account for up to three minutes of error when analyzing sunset and sunrise times.
+Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for elevation changes, and differences in location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
-Regardless, these limitations provide minimal challenges to the results of our findings. We would however, recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs, as well as inform research into safety measures that can be applied to mitigate the adverse effects of dusk driving. \hfill\newline \hfill\newline This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our github repository at BLINDED. <!-- conference papers do not normally have an appendix -->
+Regardless, these limitations provide minimal challenges to the results of our findings. We would, however, recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs and inform research into safety measures that can mitigate the adverse effects of dusk driving. \hfill\newline \hfill\newline This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our github repository at BLINDED. <!-- conference papers do not normally have an appendix -->
 
 \clearpage
 
