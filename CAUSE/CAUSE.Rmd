@@ -554,7 +554,7 @@ Figure \@ref(fig:crashDay) shows the average number of crashes by day of the wee
 w3
 ```
 
-Fridays are, on average, the day with the highest number of car crashes. One explanation for this is that more people are on the road due to weekend travel. However, DUI crashes happen more often by far on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night which leads to crashes early on Saturday and Sunday morning.
+Fridays are, on average, the day with the highest number of car crashes. One explanation for this trend is that more people are on the road due to weekend travel. However, DUI crashes occur at a much higher rate on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night leading to crashes early on Saturday and Sunday morning.
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
