@@ -228,7 +228,7 @@ The initial data overview uncovered a potential connection between animal-relate
 
 ## Data Extraction
 
-While the time of day controls human behavior, sunrise and sunset regulate daily routines of animals. Times of sunrise and sunset depend on one's location and the time of the year. Light conditions, such as dusk and dawn, are included as part of the accident report, however their change over time made it hard for us to come to a single conclusion. We therefore thought it more appropriate for an anlysis to transform the time of an accident with respect to when the sun is rising and setting. Sunset and sunrise times were not included in the accident report. As an alternative data source we used the data portal by @timeanddate. Figure \@ref(fig:timeanddate) shows an example of the available data for the first week of March 2020 for Ames, IA. Rather than scraping all locations over time, we focused only on Ames. Ames is Iowa's major town closest to the state's geographical center. Making Ames the reference point limits the variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one-minute change in sunrise and sunset times. By using Ames, these discrepancies are limited to under three minutes. We chose to scrape data for 2020 because it is the most recent leap year and therefore provides data for February 29th (see appendix for details).
+While the time of day controls human behavior, sunrise and sunset regulate daily routines of animals. Times of sunrise and sunset depend on one's location and the time of the year. Light conditions, such as dusk and dawn, are included as part of the accident report, however their change over time made it hard for us to come to a single conclusion. We therefore thought it more appropriate for an analysis to transform the time of an accident with respect to when the sun is rising and setting. Sunset and sunrise times were not included in the accident report. As an alternative data source we used the data portal by @timeanddate. Figure \@ref(fig:timeanddate) shows an example of the available data for the first week of March 2020 for Ames, IA. Rather than scraping all locations over time, we focused only on Ames. Ames is Iowa's major town closest to the state's geographical center. Making Ames the reference point limits the variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one-minute change in sunrise and sunset times. By using Ames, these discrepancies are limited to under three minutes. We chose to scrape data for 2020 because it is the most recent leap year and therefore provides data for February 29th (see appendix for details).
 
 ```{r timeanddate, fig.cap="Example of  data on  sunrise and sunset times provided by timeanddate.com."}
 knitr::include_graphics("../images/paste-5719206D.png")
@@ -313,7 +313,7 @@ grid.arrange(sunr, suns, ncol = 2)
 
 ## Daylight Analysis
 
-Figure \@ref(fig:daylight) shows a summary of the average number of crashes by day by thelength of the day measured in daylight hours. A LOESS (Locally Weighted Scatterplot Smoothing) fit is added as a line to the scatterplot to summarize the relationship between length of day and the number of car crashes.
+Figure \@ref(fig:daylight) shows a summary of the average number of crashes by day by the length of the day measured in daylight hours. A LOESS (Locally Weighted Scatterplot Smoothing) fit is added as a line to the scatterplot to summarize the relationship between length of day and the number of car crashes.
 
 ```{r daylight, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = "Crashes by length of the day, with a line fit using LOESS smoothing"}
 daylight <- df%>%
@@ -333,7 +333,7 @@ daylight %>%
   scale_colour_viridis_d("Month")
 ```
 
-While there is more variability in earlier months (as seen before in Figure \@ref(fig:avgcrashes)), there is a very clear downward trend, showing that the average number of crashes decreases with more daylight. However, for the long summer days we see an increase in the number of crashes again -- most likely due to the additional opportunities that longer days provide. <!--there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.--> <!--The difference in the average number of crashes in March compared to September is interesting: while the amount of daylight hours is about the same (around 12 hours), there are on average fewer crashes in March than in September.  -->
+While there is more variability in earlier months (as seen before in Figure \@ref(fig:avgcrashes)), there is a very clear downward trend, showing that the average number of crashes decreases with more daylight. However, for the long summer days we see an increase in the number of crashes again -- most likely due to the additional opportunities that longer days provide. The difference in crashes between March and September is interesting: while the amount of daylight hours is about the same (12 hours), there are on average fewer crashes in March than in September. This is most likely to increased animal activity during fall months, particularly in regards to deer. <!--there is a correlation to fewer daylight hours and more crashes. This is likely due to colder weather causing poor road conditions in the winter months, as well as an increase in drivers during dusk and dawn. As previously noted, dusk and dawn prove to be some of the most dangerous times to drive.--> <!--The difference in the average number of crashes in March compared to September is interesting: while the amount of daylight hours is about the same (around 12 hours), there are on average fewer crashes in March than in September.  -->
 
 # Alcohol Analysis
 
@@ -549,14 +549,14 @@ w3 <- dow %>%
 
 ```
 
-Figure \@ref(fig:crashDay) shows the aveage number of crashes by day of the week (in grey) and compares that to the number of crashes under the influence of drugs (in orange).
+Figure \@ref(fig:crashDay) shows the average number of crashes by day of the week (in grey) and compares that to the number of crashes under the influence of drugs (in orange).
 
 ```{r crashDay, warning = FALSE, message = FALSE, echo = FALSE, fig.cap= "Average number of crashes by day of the week (grey). The subset of drunk crashes is shown in orange. Note that drunk crashes are shown on a different scale to emphasize the weekly pattern. "}
 #grid.arrange(w1, w2, ncol = 2)
 w3
 ```
 
-Fridays are on average the day with the highest number of car crashes. One explanation for this is that more people are on the road due to weekend travel. However, DUI crashes happen more often by far on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night which leads to crashes early on Saturday and Sunday morning.
+Fridays are, on average, the day with the highest number of car crashes. One explanation for this is that more people are on the road due to weekend travel. However, DUI crashes happen more often by far on Saturdays and Sundays. This is likely due to drinking on Friday and Saturday night which leads to crashes early on Saturday and Sunday morning.
 
 ```{r, eval = FALSE, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
 # Plot of crashes by days in January
@@ -571,7 +571,7 @@ crash %>%
 
 Based on our data, we found sufficient evidence that dawn and dusk hours cause a significant increase in animal-related crashes due to increased animal activity, the adjustment of driver's eyes, and failure to adequately turn on headlights. We also found that alcohol and drugs significantly impair a driver's ability, leading to a drastic increase in fatalities and property damage. These crashes are concentrated at night and during the weekends.
 
-From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of driving while intoxicated. Those efforts should be continued as they are important to keeping the roads safe.
+From these findings, we recommend that drivers be further informed about the dangers of driving immediately after sunset. Furthermore, vehicle manufacturers can take precautions to ensure lights turn on at a certain darkness level. Our analysis also supports ongoing efforts to educate drivers about the dangers of driving while intoxicated.
 
 Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for changes in elevation, and differences location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
