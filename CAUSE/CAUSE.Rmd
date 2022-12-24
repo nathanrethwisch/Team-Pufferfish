@@ -33,21 +33,21 @@ affiliation:
   #    - name: Eldon Tyrell
   #      mark: 4
 
-  institution:
-    - name: Iowa State University
-      department: Data Science
-      location: Ames, IA 50011
-      email: nreth@iastate.edu
-      mark: 1
-      author:
-        - name: Nathan Rethwisch
-    - name: Iowa State University
-      department: Statistics
-      location: Ames, IA 50011
-      email: zswayne@iastate.edu
-      mark: 2
-      author:
-        - name: Zachary Swayne
+  # institution:
+  #   - name: Iowa State University
+  #     department: Data Science
+  #     location: Ames, IA 50011
+  #     email: nreth@iastate.edu
+  #     mark: 1
+  #     author:
+  #       - name: Nathan Rethwisch
+  #   - name: Iowa State University
+  #     department: Statistics
+  #     location: Ames, IA 50011
+  #     email: zswayne@iastate.edu
+  #     mark: 2
+  #     author:
+  #       - name: Zachary Swayne
 keywords: ["data linkage", "exploratory data analysis", "data visualization", "vehiculuar accidents", "Iowa vehicular collisions"]
 abstract: 
   According to the @causeofdeath, traffic accidents are the top cause of death for US adults aged 1-54. Understanding what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about various accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. Our analysis finds several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can better inform drivers and lawmakers who seeming to improve road safety. We also present information about future research that may be done in the study area.
