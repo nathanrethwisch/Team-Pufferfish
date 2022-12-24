@@ -100,8 +100,6 @@ crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash; the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
 
-The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether or not the driver was driving under the influence.
-
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
 crashes$`City Name`[crashes$`City Name` == ""] <- NA
