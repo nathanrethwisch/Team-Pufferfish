@@ -33,21 +33,21 @@ affiliation:
   #    - name: Eldon Tyrell
   #      mark: 4
 
-  institution:
-    - name: Iowa State University
-      department: Data Science
-      location: Ames, IA 50011
-      email: nreth@iastate.edu
-      mark: 1
-      author:
-        - name: Nathan Rethwisch
-    - name: Iowa State University
-      department: Statistics
-      location: Ames, IA 50011
-      email: zswayne@iastate.edu
-      mark: 2
-      author:
-        - name: Zachary Swayne
+  # institution:
+  #   - name: Iowa State University
+  #     department: Data Science
+  #     location: Ames, IA 50011
+  #     email: nreth@iastate.edu
+  #     mark: 1
+  #     author:
+  #       - name: Nathan Rethwisch
+  #   - name: Iowa State University
+  #     department: Statistics
+  #     location: Ames, IA 50011
+  #     email: zswayne@iastate.edu
+  #     mark: 2
+  #     author:
+  #       - name: Zachary Swayne
 keywords: ["data linkage", "exploratory data analysis", "data visualization", "vehiculuar accidents", "Iowa vehicular collisions"]
 abstract: 
   According to the @causeofdeath, traffic accidents are the top cause of death for US adults aged 1-54. Understanding what causes these accidents and how to prevent them is imperative to keeping vehicular operators and passengers safe. Our analysis uses public car crash data from the Iowa Department of Transportation. This data was collected from January 2009 until September 2022 and includes information about various accident-related statistics. We focus on investigating the link between animal-related car accidents and daylight, specifically sunrise and sunset time. We also investigate the impacts of driving under the influence of drugs and alcohol on the severity of vehicular accidents. Our analysis finds several links between sunrise/sunset times and crashes in Iowa. Furthermore, we were able to connect high rates of property damage and fatalities to the influence of drugs and alcohol. These findings can better inform drivers and lawmakers who seeming to improve road safety. We also present information about future research that may be done in the study area.
@@ -123,8 +123,6 @@ crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/T
 
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash; the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
 
-The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash, the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether or not the driver was driving under the influence.
-
 ```{r wrangling, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Making blank and N/A value in NA
 crashes$`City Name`[crashes$`City Name` == ""] <- NA
@@ -175,7 +173,7 @@ In our project, we are interested in two of the biggest factors contributing to 
 
 # First overview
 
-Between Jan 1, 2009, and the end of Septembe 2022, a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that there are fewer crashes during spring and summer months (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with a large number of crashes in some years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes compared to the rest of the year (shown in orange). On New Year's Day, almost triple the number of drug-involved crashes happen compared to any regular day. We will further investigate the relationship between alcohol and crashes in section IV.
+Between Jan 1, 2009, and the end of September 2022, a total of 728,442 crashes in Iowa were reported. Figure \@ref(fig:avgcrashes) shows the average number of crashes in Iowa by day of the year. We see that there are fewer crashes during spring and summer months (on average about 15% fewer) than during the rest of the year. Besides better weather during the summer months, more daylight hours provide better lighting conditions for drivers (see also section III C). From November to February, we see an increased variability in the number of crashes -- this is likely due to bad weather days with a large number of crashes in some years. There is a clear holiday effect in the number of crashes: New Year's day, the Fourth of July, Thanksgiving, Christmas day and the day after have a much-reduced number of crashes. However, both New Year's day and the Fourth of July have a very large number of drunk crashes compared to the rest of the year (shown in orange). On New Year's Day, almost triple the number of drug-involved crashes happen compared to any regular day. We will further investigate the relationship between alcohol and crashes in section IV.
 
 ````{=html}
 <!--Finally, I looked at crashes by day of the year. There is no real pattern in by day of the year, but there are a few outliers. Both New Year's day and the Fourth of July have a very large amount of drunk crashes in comparison to the rest of the year. This first graph shows all drug-related crashes:
@@ -595,13 +593,19 @@ From these findings, we recommend that drivers be further informed about the dan
 
 Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for elevation changes, and differences in location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
-Regardless, these limitations provide minimal challenges to the results of our findings. We recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs and inform research into safety measures that can mitigate the adverse effects of dusk driving. <!-- conference papers do not normally have an appendix -->
+Regardless, these limitations provide minimal challenges to the results of our findings. We recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs and inform research into safety measures that can mitigate the adverse effects of dusk driving. 
+
+\hfill\newline
+\hfill\newline
+This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our GitHub repository at BLINDED. 
+<!-- conference papers do not normally have an appendix -->
+
 
 \clearpage
 
 # Appendix {#appendix .unnumbered}
 
-This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our GitHub repository at BLINDED. 
+
 
 ## Data Cleaning/Processing
 
