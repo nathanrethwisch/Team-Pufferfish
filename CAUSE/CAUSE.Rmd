@@ -61,12 +61,35 @@ with_amsmath: true
 # with_array: true
 # with_dblfloatfix: true
 
+geometry: margin=1in
+fontsize: 10pt
 bibliography: references.bib
 output:
   bookdown::pdf_book:
+    includes:
+      in_header: "preamble.tex"
     base_format: rticles::ieee_article
+    extra_dependencies:
+      titlesec: null
+      parskip: null
 #citation_sorting: none   ## used as sorting option of the biblatex package (if selected)
 ---
+
+<!--
+\usepackage{titlesec}
+\setlength{\belowcaptionskip}{-15pt}
+\usepackage{parskip}
+\setlength{\parskip}{0.2\baselineskip plus 1pt}
+-->
+
+```{=latex}
+\titlespacing{\subsection}{0pt}{1ex}{0ex}
+\titlespacing{\section}{0pt}{1ex}{0ex}
+\titlespacing{\subparagraph}{0pt}{1ex}{0ex}
+
+%\titlespacing*{\section} {0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+%\titlespacing*{\subsection} {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+```
 
 \clearpage
 
@@ -93,9 +116,9 @@ theme_set(theme_bw())
 
 ```{r data, echo = FALSE, message = FALSE, results = FALSE, warning = FALSE}
 #Use this if the below code doesn't work - file must be stored on your device under the same folder.
-crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
+#crashes <- read_csv("../../Vehicle_Crashes_in_Iowa.csv")
 
-#crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
+crashes <- read_csv("https://media.githubusercontent.com/media/nathanrethwisch/Team-Pufferfish/main/Vehicle_Crashes_in_Iowa.csv")
 ```
 
 The Iowa Department of Transportation collects data on every reported crash and makes this information publicly available at \url{https://icat.iowadot.gov/}. For each crash, a large number of variables is collected: date, time and location of the crash; the number of vehicles and passengers involved; crash severity measured in property damage, number of injuries, or fatalities; contributing factors such as weather and road conditions are reported, and whether any of the drivers were driving under the influence.
@@ -228,8 +251,7 @@ crashes %>% group_by(Year, Month, Hour) %>% count() %>%
 
 The initial data overview uncovered a potential connection between animal-related crashes and the dawn and dusk hours. In this section, we dig deeper into this idea to investigate the potential causes of the two daily spikes in animal-related crashes.
 
-## Data Extraction
-
+<!--## Data Extraction-->
 While the time of day controls human behavior, sunrise and sunset regulate the daily routines of animals. Times of sunrise and sunset depend on one's location and the time of the year. Light conditions, such as dusk and dawn, are included as part of the accident report, however, their change over time made it hard for us to come to a single conclusion. Therefore, we thought it more appropriate for an analysis to transform the time of an accident with respect to when the sun is rising and setting. The accident report did not include sunset and sunrise times. As an alternative data source, we used the data portal by @timeanddate. Figure \@ref(fig:timeanddate) shows an example of the available data for the first week of March 2020 for Ames, IA. Rather than scraping all locations over time, we focused only on Ames. Ames is Iowa's major town closest to the state's geographical center. Making Ames the reference point limits the variation of sunrise and sunset times based on location. For approximately every 70 miles, there is a one-minute change in sunrise and sunset times. By using Ames, these discrepancies are limited to under three minutes. We chose to scrape data for 2020 because it is the most recent leap year and therefore provides data for February 29th (see appendix for details).
 
 ```{r timeanddate, fig.cap="Example of  data on  sunrise and sunset times provided by timeanddate.com."}
@@ -376,8 +398,7 @@ crash <- crash %>%
 (true_rows <- nrow(crash) - false_rows)
 ```
 
-## Property Damage
-
+**Property Damage:**
 Although crashes involving drunk drivers are less common, they cause about 45% or \$3000 more damage on average. <!--Figure @ref(fig:property)shows the difference in property damage between drunk and sober crashes.--> We also looked into the average number of fatalities with and without the use of alcohol. While sober, 1 in 127 crashes (0.79%) result in a fatality. However, when drugs or alcohol are present, fatalities happen in 1 of every 20 crashes (5%). The presence of drugs and alcohol leads to an unprecedented rise in the fatality rate.
 
 ```{r, results = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
@@ -464,9 +485,7 @@ gg2<- byhour_alc %>%
 # Most crashes with substances involved happen from 11 P.M. to 3 A.M.
 
 ```
-
-## Hour of the Day and Day of the Week
-
+**Hour of the Day:**
 Figure \@ref(fig:crashHour) (left) shows the familiar pattern on average number of crashes by the hour of the day. This pattern changes considerably when one of the drivers is drunk. Most DUI crashes happen at night between 11 pm and 3 am.
 
 ```{r crashHour, warning = FALSE, echo = FALSE, fig.cap = "Crashes by hour shown across all drivers (left) and inebriated drivers (right)", fig.height=3.5}
@@ -549,6 +568,7 @@ w3 <- dow %>%
 
 ```
 
+**Day of the Week:**
 Figure \@ref(fig:crashDay) shows the average number of crashes by day of the week (in grey) and compares that to the number of crashes under the influence of drugs (in orange).
 
 ```{r crashDay, warning = FALSE, message = FALSE, echo = FALSE, fig.cap= "Average number of crashes by day of the week (grey). The subset of drunk crashes is shown in orange. Note that drunk crashes are shown on a different scale to emphasize the weekly pattern. "}
@@ -575,11 +595,13 @@ From these findings, we recommend that drivers be further informed about the dan
 
 Some limitations of our analysis include the lack of exact positional data for all sunrise and sunset times. Although we reduced variability in our model as much as possible, we did not account for elevation changes, and differences in location can account for up to three minutes of error when analyzing sunset and sunrise times.
 
-Regardless, these limitations provide minimal challenges to the results of our findings. We recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs and inform research into safety measures that can mitigate the adverse effects of dusk driving. \hfill\newline \hfill\newline This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our GitHub repository at BLINDED. <!-- conference papers do not normally have an appendix -->
+Regardless, these limitations provide minimal challenges to the results of our findings. We recommend an analysis of rush hour traffic and its effect on the prevalence of vehicular accidents. Overall, our findings may motivate drug and alcohol prevention programs and inform research into safety measures that can mitigate the adverse effects of dusk driving. <!-- conference papers do not normally have an appendix -->
 
 \clearpage
 
 # Appendix {#appendix .unnumbered}
+
+This report has been prepared in Rmarkdown. All results, figures, and code are publicly available from our GitHub repository at BLINDED. 
 
 ## Data Cleaning/Processing
 
